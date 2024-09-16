@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dashboard</title>
+        <!--<meta http-equiv="refresh" content="3">-->
+        <style>
+            
+        </style>
+        <script>
+            fetch('./package.json')
+            .then(res => res.json)
+            .then(data => {
+                console.log(data);
+            })
+        </script>
+    </head>
+    <body>
+        <div style="max-width: fit-content;margin-left: auto;margin-right: auto; border:solid;background-color: aqua;">
+            <form action="FileUpload.sql" method="post" enctype="multipart/form-data">
+                <input type="file" id="myFile" name="filename" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/pdf">
+                <button>Submit</button>
+              </form>
+              <h1>nathan</h1>
+        </div>       
+    </body>
+</html>
