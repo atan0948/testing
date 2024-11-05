@@ -6,7 +6,6 @@ function FileUpload() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  // Styles
   const formStyle = {
     backgroundColor: "#fff",
     padding: "20px",
@@ -15,10 +14,10 @@ function FileUpload() {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: "100%", // Use 100% to fill the grid item
-    maxWidth: "400px", // Optional max width to prevent excessive stretching
-    margin: "0 auto", // Center the component within the grid item
-    boxSizing: "border-box", // Ensure padding is included in width
+    width: "100%",
+    maxWidth: "400px",
+    margin: "0 auto",
+    boxSizing: "border-box",
   };
 
   const inputStyle = {
@@ -43,25 +42,46 @@ function FileUpload() {
   const messageStyle = {
     marginTop: "10px",
     textAlign: "center",
-    color: "#28a745", // Success color
+    color: "#28a745",
   };
 
   const errorStyle = {
     marginTop: "10px",
     textAlign: "center",
-    color: "#dc3545", // Error color
+    color: "#dc3545",
   };
+
+  const blockedFileTypes = [
+    ".html",
+    ".htm",
+    ".zip",
+    ".rar",
+    ".7z",
+    ".txt",
+    ".gif",
+    "exe",
+  ];
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    setMessage(`File selected: ${selectedFile.name}`);
-    setError("");
+    if (selectedFile) {
+      setFile(selectedFile);
+      setMessage(`File selected: ${selectedFile.name}`);
+      setError("");
+    }
   };
 
   const handleFileUpload = async () => {
     if (!file) {
       setError("Please select a file first.");
+      return;
+    }
+
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (blockedFileTypes.includes(`.${fileExtension}`)) {
+      setError(`This file type is not allowed: ${fileExtension.toUpperCase()}`);
+      setFile(null);
+      setMessage("");
       return;
     }
 
@@ -76,7 +96,7 @@ function FileUpload() {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if needed
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
@@ -87,12 +107,13 @@ function FileUpload() {
       } else {
         const data = await response.json();
         setMessage("File uploaded successfully: " + data.filename);
-        setFile(null); // Clear the file after successful upload
+        setFile(null);
         setError("");
       }
     } catch (err) {
       console.error("Upload error:", err);
       setError("An error occurred during file upload. Please try again.");
+      setMessage("");
     } finally {
       setUploading(false);
     }
@@ -104,7 +125,7 @@ function FileUpload() {
         style={{
           textAlign: "center",
           color: "#000",
-          fontSize: "2rem", // Adjusted font size for better responsiveness
+          fontSize: "2rem",
           marginBottom: "20px",
         }}
       >
@@ -114,7 +135,12 @@ function FileUpload() {
       <button
         onClick={handleFileUpload}
         style={buttonStyle}
-        disabled={uploading}
+        disabled={
+          uploading ||
+          !file ||
+          (file &&
+            blockedFileTypes.includes(file.name.split(".").pop().toLowerCase()))
+        }
       >
         {uploading ? "Uploading..." : "Upload File"}
       </button>
