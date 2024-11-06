@@ -29,11 +29,11 @@ function Header() {
     <div style={headerContainerStyle}>
       <div style={logoStyle}>YourAppLogo</div>
       <div style={profileContainerStyle}>
-        <span>John Doe</span> {/* Placeholder for the username */}
+        <span>User Name</span> {/* Placeholder for the username */}
         <div>
-          <FaRegUserCircle />
+          <FaRegUserCircle style={{ fontSize: "35px" }} />
+          {/* Profile icon */}
         </div>
-        {/* Profile icon */}
       </div>
     </div>
   );
