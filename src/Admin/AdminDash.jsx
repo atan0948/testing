@@ -2,9 +2,9 @@ import React from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import DashMetrics from "./DashMetrics";
-import UserGrowthChart from "./UserGrowthChart"; // Import the User Growth chart
-import UserActivityChart from "./UserActivityChart"; // Import the Active vs Inactive Users chart
-import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Import the Daily Activity Heatmap chart
+import UserGrowthChart from "./UserGrowthChart";
+import UserActivityChart from "./UserActivityChart";
+import ActivityHeatmapChart from "./ActivityHeatmapChart";
 
 const containerStyle = {
   display: "flex",
@@ -29,12 +29,19 @@ const contentStyle = {
 
 const chartContainerStyle = {
   display: "grid",
-  gridTemplateColumns: "1fr 1fr",
+  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", // Responsive grid
   gap: "20px",
   marginTop: "20px",
 };
 
 function AdminDash() {
+  // These would typically come from an API or state management
+  const userCount = "1,500"; // Example user count
+  const totalViews = "2,300"; // Example total views
+  const activeUsers = "300"; // Example active users
+  const newSignUps = "50"; // Example new sign-ups today
+  const totalFeedback = "150"; // Example total feedback
+
   return (
     <div style={containerStyle}>
       <Sidebar />
@@ -42,7 +49,13 @@ function AdminDash() {
         <Header />
         <div style={contentStyle}>
           <h2>Main Content Area</h2>
-          <DashMetrics /> {/* This line will render the metrics */}
+          <DashMetrics
+            userCount={userCount}
+            totalViews={totalViews}
+            activeUsers={activeUsers}
+            newSignUps={newSignUps}
+            totalFeedback={totalFeedback}
+          />
           <h3>User Insights</h3>
           <div style={chartContainerStyle}>
             <div>
@@ -53,10 +66,10 @@ function AdminDash() {
               <h4>Active vs Inactive Users</h4>
               <UserActivityChart />
             </div>
-          </div>
-          <div style={{ marginTop: "20px" }}>
-            <h4>Daily Activity Heatmap</h4>
-            <ActivityHeatmapChart />
+            <div style={{ marginTop: "20px" }}>
+              <h4>Daily Activity Heatmap</h4>
+              <ActivityHeatmapChart />
+            </div>
           </div>
         </div>
       </div>

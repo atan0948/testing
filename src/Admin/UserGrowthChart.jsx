@@ -15,7 +15,6 @@ const userData = [
   { month: "Sept", users: 620 },
   { month: "Oct", users: 900 },
   { month: "Nov", users: 1500 },
-  // Add more data points as needed
 ];
 
 const UserGrowthChart = () => (
