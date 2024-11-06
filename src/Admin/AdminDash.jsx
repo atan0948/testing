@@ -1,6 +1,5 @@
 import React from "react";
 import Sidebar from "./Sidebar"; // Adjust path if needed
-import Header from "./Header"; // Adjust path if needed
 import DashMetrics from "./DashMetrics"; // Adjust path if needed
 import UserGrowthChart from "./UserGrowthChart"; // Adjust path if needed
 import UserActivityChart from "./UserActivityChart"; // Adjust path if needed
@@ -46,7 +45,6 @@ function AdminDash({ isDarkMode, toggleMode }) {
     <div style={containerStyle(isDarkMode)}>
       <Sidebar isDarkMode={isDarkMode} toggleMode={toggleMode} />
       <div style={mainStyle}>
-        <Header />
         <div style={contentStyle(isDarkMode)}>
           <h2>Main Content Area</h2>
           <DashMetrics

@@ -6,10 +6,11 @@ import {
   FaCog,
   FaMoon,
   FaSun,
+  FaBars,
 } from "react-icons/fa";
 
 const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Initially collapsed
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -19,7 +20,7 @@ const Sidebar = () => {
     backgroundColor: isDarkMode ? "#333" : "#f4f4f4",
     color: isDarkMode ? "#fff" : "#000",
     height: "100vh",
-    width: isSidebarOpen ? "250px" : "115px",
+    width: isSidebarOpen ? "250px" : "80px", // Sidebar width changes based on state
     transition: "width 0.3s ease",
     padding: "20px",
     boxSizing: "border-box",
@@ -29,60 +30,100 @@ const Sidebar = () => {
     display: "flex",
     alignItems: "center",
     marginBottom: "20px",
+    display: isSidebarOpen ? "flex" : "none", // Show only when sidebar is open
   };
 
   const avatarStyle = {
-    width: "80px", // Increased size
-    height: "80px", // Increased size
+    width: "60px", // Adjusted size
+    height: "60px", // Adjusted size
     borderRadius: "50%",
-    marginRight: "15px", // Increased margin for better spacing
+    marginRight: "15px",
   };
 
   const userNameStyle = {
-    fontSize: "1.5rem", // Larger text size
-    fontWeight: "bold", // Optional: makes the username bolder
+    fontSize: "1.2rem",
+    fontWeight: "bold",
+    display: isSidebarOpen ? "inline" : "none", // Show name only when sidebar is open
   };
 
   const linkStyle = {
-    padding: "10px",
-    color: "white",
+    padding: "10px 15px",
+    color: isDarkMode ? "#fff" : "#000",
     textDecoration: "none",
-    display: "block",
+    display: "flex",
+    alignItems: "center",
     transition: "background-color 0.3s ease",
+    borderRadius: "5px",
+    marginBottom: "10px",
   };
 
   const hoveredLinkStyle = {
-    backgroundColor: "#4CAF50", // Hover effect color
+    backgroundColor: "#4CAF50",
+  };
+
+  const linkTextStyle = {
+    marginLeft: "10px", // Spacing between icon and text
+    display: isSidebarOpen ? "inline" : "none", // Only show text when sidebar is open
+  };
+
+  const iconStyle = {
+    fontSize: "1.5rem", // Icon size
+    display: isSidebarOpen ? "inline" : "none", // Only show icon when sidebar is open
   };
 
   return (
     <div style={sidebarStyle}>
+      {/* Hamburger Icon for Sidebar Toggle */}
       <button
         onClick={toggleSidebar}
-        style={{ marginBottom: "20px", padding: "10px", background: "#ccc" }}
+        style={{
+          marginBottom: "20px",
+          padding: "10px 15px",
+          background: "#ccc",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          display: "block", // Always show hamburger icon
+        }}
       >
-        {isSidebarOpen ? "Close Sidebar" : "Open Sidebar"}
+        <FaBars />
       </button>
 
       {/* User Profile */}
       <div style={profileStyle}>
-        <img src='/profile-pic.jfif' alt='Profile' style={avatarStyle} />
+        <img src='/profile-pic.jfif' alt='User Avatar' style={avatarStyle} />
         <span style={userNameStyle}>User Name</span>
       </div>
 
       {/* Links */}
       <div>
-        <a href='#' style={{ ...linkStyle, ...hoveredLinkStyle }}>
-          <FaHome /> {isSidebarOpen && "Home"}
+        <a
+          href='#'
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+        >
+          <FaHome style={iconStyle} />
+          <span style={linkTextStyle}>Home</span>
         </a>
-        <a href='#' style={{ ...linkStyle, ...hoveredLinkStyle }}>
-          <FaUsers /> {isSidebarOpen && "Users"}
+        <a
+          href='#'
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+        >
+          <FaUsers style={iconStyle} />
+          <span style={linkTextStyle}>Users</span>
         </a>
-        <a href='#' style={{ ...linkStyle, ...hoveredLinkStyle }}>
-          <FaChartBar /> {isSidebarOpen && "Analytics"}
+        <a
+          href='#'
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+        >
+          <FaChartBar style={iconStyle} />
+          <span style={linkTextStyle}>Analytics</span>
         </a>
-        <a href='#' style={{ ...linkStyle, ...hoveredLinkStyle }}>
-          <FaCog /> {isSidebarOpen && "Settings"}
+        <a
+          href='#'
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+        >
+          <FaCog style={iconStyle} />
+          <span style={linkTextStyle}>Settings</span>
         </a>
       </div>
 
@@ -91,15 +132,20 @@ const Sidebar = () => {
         onClick={toggleMode}
         style={{
           marginTop: "20px",
-          padding: "10px",
+          padding: "10px 15px",
           background: isDarkMode ? "#444" : "#ddd",
           color: isDarkMode ? "#fff" : "#000",
           border: "none",
           borderRadius: "5px",
+          cursor: "pointer",
+          display: isSidebarOpen ? "flex" : "none", // Only show dark mode button when sidebar is open
+          alignItems: "center",
         }}
       >
-        {isDarkMode ? <FaSun /> : <FaMoon />}{" "}
-        {isDarkMode ? "Light Mode" : "Dark Mode"}
+        {isDarkMode ? <FaSun /> : <FaMoon />}
+        <span style={{ marginLeft: "10px" }}>
+          {isDarkMode ? "Light Mode" : "Dark Mode"}
+        </span>
       </button>
     </div>
   );
