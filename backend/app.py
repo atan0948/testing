@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from .db import get_db  # Adjust the import based on your project structure
 from .auth import register, login, get_current_user, UserRegister, UserLogin
 from .fileupload.upload import router as upload_router  # Import your upload router
+from .user_count import router as get_user_count
 
 app = FastAPI()
 
@@ -25,6 +26,9 @@ app.add_middleware(
 # Include the upload router
 app.include_router(upload_router, prefix="/api", tags=["uploads"])
 
+#user count
+app.include_router(get_user_count, prefix="/api", tags=["user_count"])
+
 # Route for user registration
 @app.post("/register")
 async def register_user(user: UserRegister, db: Session = Depends(get_db)):
@@ -39,6 +43,8 @@ async def login_user(user: UserLogin, db: Session = Depends(get_db)):
 @app.get("/users/me")
 async def read_users_me(current_user=Depends(get_current_user)):
     return current_user
+
+
 
 if __name__ == "__main__":
     import uvicorn
