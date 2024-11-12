@@ -7,16 +7,14 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from .db import User, get_db
 from datetime import datetime, timedelta
-from itsdangerous import URLSafeTimedSerializer
+from .pass_forgot import forgot_password, reset_password  # Import password reset functions
 
 # Constants
 SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-PASSWORD_RESET_EXPIRE_MINUTES = 30  # Token expiration for password reset
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-s = URLSafeTimedSerializer(SECRET_KEY)
 
 class UserRegister(BaseModel):
     username: str
@@ -26,13 +24,6 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     email: str
     password: str
-
-class PasswordResetRequest(BaseModel):
-    email: EmailStr
-
-class PasswordResetToken(BaseModel):
-    token: str
-    new_password: str
 
 async def register(user: UserRegister, db: Session = Depends(get_db)):
     password_hash = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -59,34 +50,6 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"user_id": db_user.id}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
-
-async def forgot_password(request: PasswordResetRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Email not found.")
-    
-    # Generate a password reset token
-    token = s.dumps(user.email, salt='password-reset-salt')
-    # Here, you would send the email with the reset link (using your email function)
-    print(f"Send this link to reset password: http://localhost:8000/reset-password/{token}")
-    
-    return {"message": "Password reset link sent to your email."}
-
-async def reset_password(token: str, request: PasswordResetToken, db: Session = Depends(get_db)):
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=PASSWORD_RESET_EXPIRE_MINUTES * 60)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid or expired token.")
-    
-    hashed_password = bcrypt.hashpw(request.new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    user = db.query(User).filter(User.email == email).first()
-    
-    if user:
-        user.password_hash = hashed_password
-        db.commit()
-        return {"message": "Password has been reset successfully."}
-    
-    raise HTTPException(status_code=404, detail="User not found.")
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()

@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Sidebar from "./Sidebar"; // Adjust path if needed
 import DashMetrics from "./DashMetrics"; // Adjust path if needed
 import UserGrowthChart from "./UserGrowthChart"; // Adjust path if needed
 import UserActivityChart from "./UserActivityChart"; // Adjust path if needed
 import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Adjust path if needed
 
-const containerStyle = (isDarkMode) => ({
+const containerStyle = isDarkMode => ({
   display: "flex",
   height: "100vh",
   width: "100vw",
   margin: "0",
-  backgroundColor: isDarkMode ? "#333" : "#f8f9fa", // Conditional background color for dark mode
+  backgroundColor: isDarkMode ? "#333" : "#f8f9fa",
 });
 
 const mainStyle = {
@@ -19,12 +20,12 @@ const mainStyle = {
   flex: 1,
 };
 
-const contentStyle = (isDarkMode) => ({
+const contentStyle = isDarkMode => ({
   flex: 1,
-  backgroundColor: isDarkMode ? "#444" : "white", // Conditional background for content area
+  backgroundColor: isDarkMode ? "#444" : "white",
   padding: "20px",
   overflow: "auto",
-  color: isDarkMode ? "#fff" : "#000", // Conditional text color
+  color: isDarkMode ? "#fff" : "#000",
 });
 
 const chartContainerStyle = {
@@ -35,11 +36,35 @@ const chartContainerStyle = {
 };
 
 function AdminDash({ isDarkMode, toggleMode }) {
-  const userCount = "1,500"; // Example user count
-  const totalViews = "2,300"; // Example total views
-  const activeUsers = "300"; // Example active users
-  const newSignUps = "50"; // Example new sign-ups today
-  const totalFeedback = "150"; // Example total feedback
+  const [userCount, setUserCount] = useState(null); // State to hold the user count
+  const [totalViews, setTotalViews] = useState("2,300");
+  const [activeUsers, setActiveUsers] = useState("300");
+  const [newSignUps, setNewSignUps] = useState("50");
+  const [totalFeedback, setTotalFeedback] = useState("150");
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      try {
+        const response = await axios.get("/user-count?days=30");
+        console.log(response.data); // Log the response to inspect the data
+        if (response.data && response.data.userCount) {
+          setUserCount(response.data.userCount); // Set the user count if the data is correct
+        } else {
+          setUserCount(0); // If userCount is not present, set it to 0
+        }
+      } catch (err) {
+        console.error(err); // Log any errors to the console
+        setError("Failed to fetch user count.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserCount();
+  }, []);
 
   return (
     <div style={containerStyle(isDarkMode)}>
@@ -48,7 +73,7 @@ function AdminDash({ isDarkMode, toggleMode }) {
         <div style={contentStyle(isDarkMode)}>
           <h2>Main Content Area</h2>
           <DashMetrics
-            userCount={userCount}
+            userCount={loading ? "Loading..." : userCount || "Data unavailable"}
             totalViews={totalViews}
             activeUsers={activeUsers}
             newSignUps={newSignUps}
@@ -70,6 +95,7 @@ function AdminDash({ isDarkMode, toggleMode }) {
               <ActivityHeatmapChart />
             </div>
           </div>
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       </div>
     </div>
