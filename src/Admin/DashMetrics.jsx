@@ -8,7 +8,7 @@ const DashMetrics = ({
   newSignUps,
   totalFeedback,
   loading,
-  error,
+  isDarkMode, // Receive isDarkMode as a prop to customize styles based on dark/light mode
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
@@ -33,15 +33,6 @@ const DashMetrics = ({
     );
   }
 
-  // Show an error message if there was an error fetching the data
-  if (error) {
-    return (
-      <div style={{ textAlign: "center", padding: "20px", color: "red" }}>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div
       style={{
@@ -58,7 +49,15 @@ const DashMetrics = ({
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
           style={{
-            background: hoveredIndex === index ? "#ced4da" : "#e9ecef",
+            background:
+              hoveredIndex === index
+                ? isDarkMode
+                  ? "#555"
+                  : "#ced4da" // Darker background on hover in dark mode
+                : isDarkMode
+                ? "#333"
+                : "#e9ecef", // Default dark or light background
+            color: isDarkMode ? "#fff" : "#000", // Ensure text is always readable
             padding: "8px 15px",
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",

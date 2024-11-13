@@ -9,28 +9,31 @@ import {
   FaBars,
 } from "react-icons/fa";
 
-const Sidebar = () => {
+const Sidebar = ({ isDarkMode, toggleMode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Initially collapsed
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleMode = () => setIsDarkMode(!isDarkMode);
+
+  // Define base background color for light and dark modes
+  const baseBackgroundColor = isDarkMode ? "#333" : "#e6e6e6"; // White for light mode and dark for dark mode
+  const collapsedBackgroundColor = isDarkMode ? "#444" : "#fff"; // Slightly darker background for collapsed state
 
   const sidebarStyle = {
-    backgroundColor: isDarkMode ? "#333" : "#f4f4f4",
+    backgroundColor: isSidebarOpen
+      ? baseBackgroundColor
+      : collapsedBackgroundColor,
     color: isDarkMode ? "#fff" : "#000",
     height: "100vh",
     width: isSidebarOpen ? "250px" : "80px", // Sidebar width changes based on state
-    transition: "width 0.3s ease",
+    transition: "width 0.3s ease, background-color 0.3s ease", // Smooth transition for width and background
     padding: "20px",
     boxSizing: "border-box",
   };
 
   const profileStyle = {
-    display: "flex",
+    display: isSidebarOpen ? "flex" : "none", // Show only when sidebar is open
     alignItems: "center",
     marginBottom: "20px",
-    display: isSidebarOpen ? "flex" : "none", // Show only when sidebar is open
   };
 
   const avatarStyle = {

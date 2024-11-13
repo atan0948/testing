@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; // Adjust path if needed
-import DashMetrics from "./DashMetrics"; // Adjust path if needed
-import UserGrowthChart from "./UserGrowthChart"; // Adjust path if needed
-import UserActivityChart from "./UserActivityChart"; // Adjust path if needed
-import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Adjust path if needed
+import Sidebar from "./Sidebar"; // Sidebar component
+import DashMetrics from "./DashMetrics"; // Dashboard metrics component
+import UserGrowthChart from "./UserGrowthChart"; // Chart showing user growth
+import UserActivityChart from "./UserActivityChart"; // Chart showing user activity
+import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Activity heatmap chart
 
 // Container styles for dark mode
-const containerStyle = isDarkMode => ({
+const containerStyle = (isDarkMode) => ({
   display: "flex",
   height: "100vh",
   width: "100vw",
@@ -23,7 +23,7 @@ const mainStyle = {
 };
 
 // Content area style based on dark mode
-const contentStyle = isDarkMode => ({
+const contentStyle = (isDarkMode) => ({
   flex: 1,
   backgroundColor: isDarkMode ? "#444" : "white",
   padding: "20px",
@@ -48,7 +48,6 @@ function AdminDash({ isDarkMode, toggleMode }) {
   const [totalFeedback, setTotalFeedback] = useState("150"); // Placeholder value
 
   const [loading, setLoading] = useState(true); // State for loading indicator
-  const [error, setError] = useState(null); // State for error messages
 
   // Fetch user count on component mount
   useEffect(() => {
@@ -66,7 +65,6 @@ function AdminDash({ isDarkMode, toggleMode }) {
         }
       } catch (err) {
         console.error(err); // Log any errors to the console
-        setError("Failed to fetch user count."); // Set error message
       } finally {
         setLoading(false); // Stop loading
       }
@@ -86,12 +84,12 @@ function AdminDash({ isDarkMode, toggleMode }) {
 
           {/* DashMetrics Component */}
           <DashMetrics
-            userCount={loading ? "Loading..." : userCount || "Data unavailable"} // Display loading or user count
+            userCount={loading ? "Loading..." : userCount || "Data unavailable"} // Pass loading state and userCount
             totalViews={totalViews}
             activeUsers={activeUsers}
             newSignUps={newSignUps}
             totalFeedback={totalFeedback}
-            isDarkMode={isDarkMode}
+            loading={loading}
           />
 
           <h3>User Insights</h3>
@@ -111,9 +109,6 @@ function AdminDash({ isDarkMode, toggleMode }) {
               <ActivityHeatmapChart />
             </div>
           </div>
-
-          {/* Show error message if there's an issue */}
-          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
       </div>
     </div>
