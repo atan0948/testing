@@ -1,5 +1,5 @@
-import React from "react";
-import { FaRegUserCircle, FaEye, FaUsers, FaComments } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaRegUserCircle, FaEye, FaComments, FaUsers } from "react-icons/fa";
 
 const DashMetrics = ({
   userCount,
@@ -7,8 +7,11 @@ const DashMetrics = ({
   activeUsers,
   newSignUps,
   totalFeedback,
-  isDarkMode,
+  loading,
+  error,
 }) => {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
   const metricsData = [
     { title: "Total Users", value: userCount, icon: <FaRegUserCircle /> },
     { title: "Total Views", value: totalViews, icon: <FaEye /> },
@@ -20,6 +23,24 @@ const DashMetrics = ({
     },
     { title: "Total Feedback", value: totalFeedback, icon: <FaComments /> },
   ];
+
+  // Show a loading spinner while the data is being fetched
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // Show an error message if there was an error fetching the data
+  if (error) {
+    return (
+      <div style={{ textAlign: "center", padding: "20px", color: "red" }}>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -34,21 +55,24 @@ const DashMetrics = ({
       {metricsData.map((metric, index) => (
         <div
           key={index}
+          onMouseEnter={() => setHoveredIndex(index)}
+          onMouseLeave={() => setHoveredIndex(null)}
           style={{
-            background: isDarkMode ? "#444" : "#e9ecef",
+            background: hoveredIndex === index ? "#ced4da" : "#e9ecef",
             padding: "8px 15px",
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            transition: "background 0.3s",
+            transition: "background 0.3s, transform 0.3s",
+            transform: hoveredIndex === index ? "scale(1.05)" : "scale(1)",
           }}
         >
           <div>
             <h4 style={{ margin: "0 0 10px" }}>{metric.title}</h4>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-              {metric.value}
+              {metric.value || "Not available"}
             </p>
           </div>
           <span style={{ fontSize: "1.5rem" }}>{metric.icon}</span>

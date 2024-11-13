@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "./api";
-import LoginSmall from "./LoginSmall"; // Header with Login
+import api from "./api"; // Import the configured axios instance for API calls
+import LoginSmall from "./LoginSmall"; // A component that handles login display
 
+// Inline styles for the form and layout
 const inputStyle = {
   marginRight: "10px",
   padding: "10px",
@@ -70,32 +71,69 @@ const mainStyle = {
   alignItems: "stretch",
 };
 
+// ForgotPassword Component
 const ForgotPass = () => {
-  const [resetEmail, setResetEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [resetEmail, setResetEmail] = useState(""); // Stores the email input by the user
+  const [loading, setLoading] = useState(false); // Tracks loading state
+  const [message, setMessage] = useState(""); // Success message
+  const [error, setError] = useState(""); // Error message
+  const [errorType, setErrorType] = useState(""); // Tracks error type (for conditional rendering)
+  const navigate = useNavigate(); // React Router hook to navigate (if needed)
 
+  // Validate email format (basic regex)
+  const validateEmail = email => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return emailPattern.test(email);
+  };
+
+  // Handle form submission
   const handlePasswordReset = async e => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-    setError("");
+    e.preventDefault(); // Prevent form from submitting normally
+    setLoading(true); // Set loading state to true
+    setMessage(""); // Reset any previous messages
+    setError(""); // Reset any previous errors
+    setErrorType(""); // Reset error type
+
+    // Validate email before sending it
+    if (!validateEmail(resetEmail)) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
 
     try {
+      // API call to backend (FastAPI)
       const response = await api.post("/forgot-password", {
-        email: resetEmail,
+        email: resetEmail, // Send the email entered by the user
       });
-      if (response.data.success) {
-        setMessage("A password reset link has been sent to your email.");
+
+      // Check if the backend responded with a success message
+      if (response.data.message) {
+        setMessage(response.data.message); // Success message from the backend
+        setResetEmail(""); // Clear the input field after successful request
+        setTimeout(() => {
+          navigate("/login"); // Redirect to login page after 2 seconds
+        }, 2000);
       } else {
-        setError("Email not found. Please try again.");
+        // If the backend does not return a success message, display an error
+        setError("Email not found. Would you like to sign up?");
+        setErrorType("email-not-found");
       }
     } catch (error) {
-      setError("An error occurred. Please try again later.");
+      if (error.response && error.response.data && error.response.data.detail) {
+        if (error.response.data.detail === "Email not found.") {
+          setError("Email not found. Would you like to sign up?");
+          setErrorType("email-not-found");
+        } else {
+          setError("An error occurred. Please try again later.");
+          setErrorType("general");
+        }
+      } else {
+        setError("An error occurred. Please try again later.");
+        setErrorType("general");
+      }
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state once the request is complete
     }
   };
 
@@ -132,10 +170,22 @@ const ForgotPass = () => {
             >
               {loading ? "Sending..." : "Send Reset Link"}
             </button>
+            {/* Show messages based on the result of the request */}
             {message && (
               <p style={{ color: "green", marginTop: "10px" }}>{message}</p>
             )}
-            {error && (
+            {error && errorType === "email-not-found" && (
+              <p style={{ color: "red", marginTop: "10px" }}>
+                {error}{" "}
+                <a
+                  href='/signup'
+                  style={{ color: "#007bff", textDecoration: "underline" }}
+                >
+                  Sign Up
+                </a>
+              </p>
+            )}
+            {error && errorType === "general" && (
               <p style={{ color: "red", marginTop: "10px" }}>{error}</p>
             )}
           </form>
