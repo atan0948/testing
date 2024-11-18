@@ -6,8 +6,11 @@ from .auth import register, login, get_current_user, UserRegister, UserLogin
 from .fileupload.upload import router as upload_router  # Import your upload router
 from .user_count import router as get_user_count
 from .pass_forgot import forgot_password, reset_password, ForgetPasswordRequest
+from dotenv import load_dotenv
 
-app = FastAPI()
+app = FastAPI()\
+
+load_dotenv()
 
 # Allow CORS for specific origins
 origins = [

@@ -7,7 +7,6 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from .db import User, get_db
 from datetime import datetime, timedelta
-from .pass_forgot import forgot_password, reset_password  # Import password reset functions
 
 # Constants
 SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")

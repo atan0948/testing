@@ -1,27 +1,28 @@
+// ForgotPass.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "./api"; // Import the configured axios instance for API calls
 import LoginSmall from "./LoginSmall"; // A component that handles login display
+import Otp from "./Otp"; // Import the OTP component
 
-// Inline styles for the form and layout
 const inputStyle = {
-  marginRight: "10px",
   padding: "10px",
   borderRadius: "5px",
   border: "1px solid #ccc",
   fontSize: "14px",
-  minWidth: "150px",
-  flex: "1 1 auto",
+  minWidth: "250px", // Adjust width for better UI
+  marginBottom: "20px",
 };
 
 const buttonStyle = {
-  padding: "8px 15px",
+  padding: "10px 20px",
   backgroundColor: "#007bff",
   color: "#fff",
   border: "none",
   borderRadius: "5px",
   cursor: "pointer",
   transition: "background-color 0.3s",
+  width: "100%", // Full width for the button
 };
 
 const containerStyle = {
@@ -35,7 +36,7 @@ const containerStyle = {
 const headerStyle = {
   height: "75px",
   width: "100%",
-  background: "white",
+  background: "#fff",
   display: "flex",
   alignItems: "center",
   padding: "0 20px",
@@ -45,40 +46,43 @@ const headerStyle = {
 const footerStyle = {
   height: "75px",
   width: "100%",
-  background: "white",
+  background: "#fff",
   textAlign: "center",
   lineHeight: "80px",
   fontSize: "18px",
 };
 
 const contentStyle = {
-  display: "grid",
-  placeItems: "center",
-  padding: "10px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  flexDirection: "column",
+  padding: "20px",
   background: "#f7f7f7",
+  boxSizing: "border-box",
 };
 
 const mainStyle = {
   width: "100%",
-  maxWidth: "600px",
+  maxWidth: "400px",
   background: "#fff",
   color: "black",
-  padding: "20px",
+  padding: "30px",
   borderRadius: "8px",
-  boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+  boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
   display: "flex",
   flexDirection: "column",
   alignItems: "stretch",
 };
 
-// ForgotPassword Component
 const ForgotPass = () => {
   const [resetEmail, setResetEmail] = useState(""); // Stores the email input by the user
   const [loading, setLoading] = useState(false); // Tracks loading state
   const [message, setMessage] = useState(""); // Success message
   const [error, setError] = useState(""); // Error message
   const [errorType, setErrorType] = useState(""); // Tracks error type (for conditional rendering)
-  const navigate = useNavigate(); // React Router hook to navigate (if needed)
+  const [otpSent, setOtpSent] = useState(false); // Tracks if OTP was sent
+  const navigate = useNavigate(); // React Router hook to navigate
 
   // Validate email format (basic regex)
   const validateEmail = email => {
@@ -107,28 +111,18 @@ const ForgotPass = () => {
         email: resetEmail, // Send the email entered by the user
       });
 
-      // Check if the backend responded with a success message
       if (response.data.message) {
         setMessage(response.data.message); // Success message from the backend
-        setResetEmail(""); // Clear the input field after successful request
+        setOtpSent(true); // Mark OTP as sent
         setTimeout(() => {
-          navigate("/login"); // Redirect to login page after 2 seconds
+          navigate("/otp"); // Redirect to OTP verification page after 2 seconds
         }, 2000);
       } else {
-        // If the backend does not return a success message, display an error
         setError("Email not found. Would you like to sign up?");
         setErrorType("email-not-found");
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.detail) {
-        if (error.response.data.detail === "Email not found.") {
-          setError("Email not found. Would you like to sign up?");
-          setErrorType("email-not-found");
-        } else {
-          setError("An error occurred. Please try again later.");
-          setErrorType("general");
-        }
-      } else {
         setError("An error occurred. Please try again later.");
         setErrorType("general");
       }
@@ -139,60 +133,45 @@ const ForgotPass = () => {
 
   return (
     <div style={containerStyle}>
-      {/* Header with Login Form */}
       <div style={headerStyle}>
         <LoginSmall loading={loading} />
       </div>
 
-      {/* Main content area for password reset */}
       <div style={contentStyle}>
-        <div style={mainStyle}>
-          <h2 style={{ marginBottom: "20px", textAlign: "center" }}>
-            Forgot Password
-          </h2>
-          <p style={{ textAlign: "left", marginBottom: "10px" }}>
-            Please enter your email for your account.
-          </p>
-          <form onSubmit={handlePasswordReset}>
-            <input
-              type='email'
-              placeholder='Enter your email'
-              style={{ ...inputStyle, width: "95%" }}
-              value={resetEmail}
-              onChange={e => setResetEmail(e.target.value)}
-              required
-              disabled={loading}
-            />
-            <button
-              type='submit'
-              style={{ ...buttonStyle, marginTop: "10px" }}
-              disabled={loading}
-            >
-              {loading ? "Sending..." : "Send Reset Link"}
-            </button>
-            {/* Show messages based on the result of the request */}
-            {message && (
-              <p style={{ color: "green", marginTop: "10px" }}>{message}</p>
-            )}
-            {error && errorType === "email-not-found" && (
-              <p style={{ color: "red", marginTop: "10px" }}>
-                {error}{" "}
-                <a
-                  href='/signup'
-                  style={{ color: "#007bff", textDecoration: "underline" }}
-                >
-                  Sign Up
-                </a>
-              </p>
-            )}
-            {error && errorType === "general" && (
-              <p style={{ color: "red", marginTop: "10px" }}>{error}</p>
-            )}
-          </form>
-        </div>
+        {!otpSent ? (
+          <div style={mainStyle}>
+            <h2 style={{ marginBottom: "20px", textAlign: "center" }}>
+              Forgot Password
+            </h2>
+            <p style={{ textAlign: "left", marginBottom: "10px" }}>
+              Please enter your email for your account.
+            </p>
+            <form onSubmit={handlePasswordReset}>
+              <input
+                type='email'
+                placeholder='Enter your email'
+                style={{ ...inputStyle, width: "95%" }}
+                value={resetEmail}
+                onChange={e => setResetEmail(e.target.value)}
+                required
+                disabled={loading}
+              />
+              <button type='submit' style={buttonStyle} disabled={loading}>
+                {loading ? "Sending..." : "Send Reset Link"}
+              </button>
+              {message && (
+                <p style={{ color: "green", marginTop: "10px" }}>{message}</p>
+              )}
+              {error && (
+                <p style={{ color: "red", marginTop: "10px" }}>{error}</p>
+              )}
+            </form>
+          </div>
+        ) : (
+          <Otp email={resetEmail} />
+        )}
       </div>
 
-      {/* Footer */}
       <div style={footerStyle}>Footer</div>
     </div>
   );
