@@ -5,7 +5,7 @@ from .db import get_db  # Adjust the import based on your project structure
 from .auth import register, login, get_current_user, UserRegister, UserLogin
 from .fileupload.upload import router as upload_router  # Import your upload router
 from .user_count import router as get_user_count
-from .pass_forgot import forgot_password, reset_password
+from .pass_forgot import forgot_password, reset_password, ForgetPasswordRequest
 
 app = FastAPI()
 
@@ -47,12 +47,12 @@ async def read_users_me(current_user=Depends(get_current_user)):
 
 # Route for sending OTP to reset password
 @app.post("/forgot-password/")
-async def forgot_password_route(email: str, db: Session = Depends(get_db)):
-    return await forgot_password(email, db)
+async def forgot_password_route(request: ForgetPasswordRequest, db: Session = Depends(get_db)):
+    return await forgot_password(request.email, db)
 
 # Route for resetting the user's password
 @app.post("/reset-password/")
-async def reset_password_route(token: str, new_password: str, otp: str, db: Session = Depends(get_db)):
+async def reset_password_route(token: str, new_password, otp: str, db: Session = Depends(get_db)):
     return await reset_password(token, new_password, otp, db)
 
 

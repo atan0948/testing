@@ -5,7 +5,7 @@ import bcrypt
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from itsdangerous import URLSafeTimedSerializer
-from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
 from .db import User
 from datetime import datetime, timedelta
 
@@ -20,6 +20,9 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")  # Make sure to set your email
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")  # Make sure to set your email password or app-specific password
+
+class ForgetPasswordRequest(BaseModel):
+    email: EmailStr
 
 def send_otp_email(to_email: str, otp: str):
     try:
@@ -45,7 +48,7 @@ async def forgot_password(email: EmailStr, db: Session):
     # Generate OTP (4-digit random number)
     otp = random.randint(1000, 9999)
 
-    # Store OTP and expiration time in the database (you may need to add a field in your User model or create a new table)
+    # Store OTP and expiration time in the database
     otp_expiry = datetime.utcnow() + timedelta(minutes=OTP_EXPIRE_MINUTES)
     
     # Assuming User model has fields otp and otp_expiry (you may need to add these in the database schema)
