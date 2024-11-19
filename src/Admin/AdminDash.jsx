@@ -42,37 +42,54 @@ const chartContainerStyle = {
 function AdminDash({ isDarkMode, toggleMode }) {
   // State for holding user metrics and chart data
   const [userCount, setUserCount] = useState(null); // For user count
+  const [newSignUps, setNewSignUps] = useState("50"); // Placeholder value for daily sign-ups
   const [totalViews, setTotalViews] = useState("2,300"); // Placeholder value
   const [activeUsers, setActiveUsers] = useState("300"); // Placeholder value
-  const [newSignUps, setNewSignUps] = useState("50"); // Placeholder value
   const [totalFeedback, setTotalFeedback] = useState("150"); // Placeholder value
 
   const [loading, setLoading] = useState(true); // State for loading indicator
+  const [error, setError] = useState(null); // State for error handling
 
-  // Fetch user count on component mount
+  // Fetch user count and daily sign-ups from the API
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
         const response = await axios.get(
           "http://localhost:8000/api/user-count-details?days=30"
-        ); // Ensure correct API endpoint
-        console.log(response.data); // Debug log to inspect response
+        );
+        console.log("API Response:", response.data); // Log API response
 
-        if (response.data && response.data.totalUserCount) {
-          setUserCount(response.data.totalUserCount); // Set the user count if data is correct
+        // Check and set the total user count
+        if (response.data && response.data.totalUserCount !== undefined) {
+          setUserCount(response.data.totalUserCount);
         } else {
-          setUserCount(0); // If no valid data, set to 0
+          setUserCount("No data available");
+        }
+
+        // Check and set daily user counts (new sign-ups today)
+        if (
+          response.data.dailyUserCounts &&
+          response.data.dailyUserCounts.length > 0
+        ) {
+          setNewSignUps(response.data.dailyUserCounts);
+        } else {
+          setNewSignUps("No data available");
         }
       } catch (err) {
-        console.error(err); // Log any errors to the console
+        console.error("API error:", err); // Log any API errors
+        setError("Error fetching data");
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false); // Stop loading once the data is fetched
       }
     };
 
     fetchUserCount();
-  }, []); // Empty dependency array to run only once
+  }, []); // Empty dependency array ensures this only runs once after the component mounts
 
+  console.log("userCount:", userCount); // Debug log userCount state
+  console.log("newSignUps:", newSignUps); // Debug log newSignUps state
+
+  // Conditional rendering for loading state and the DashMetrics component
   return (
     <div style={containerStyle(isDarkMode)}>
       {/* Sidebar Component */}
@@ -82,15 +99,23 @@ function AdminDash({ isDarkMode, toggleMode }) {
         <div style={contentStyle(isDarkMode)}>
           <h2>Main Content Area</h2>
 
-          {/* DashMetrics Component */}
-          <DashMetrics
-            userCount={loading ? "Loading..." : userCount || "Data unavailable"} // Pass loading state and userCount
-            totalViews={totalViews}
-            activeUsers={activeUsers}
-            newSignUps={newSignUps}
-            totalFeedback={totalFeedback}
-            loading={loading}
-          />
+          {/* Error handling */}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {/* Show loading state */}
+          {loading && <p>Loading...</p>}
+
+          {/* Show DashMetrics only when loading is false */}
+          {!loading && (
+            <DashMetrics
+              userCount={userCount || "No data available"} // Fallback value if no data
+              newSignUps={newSignUps || "No data available"} // Fallback value if no data
+              totalViews={totalViews}
+              activeUsers={activeUsers}
+              totalFeedback={totalFeedback}
+              loading={loading}
+            />
+          )}
 
           <h3>User Insights</h3>
 

@@ -3,9 +3,9 @@ import { FaRegUserCircle, FaEye, FaComments, FaUsers } from "react-icons/fa";
 
 const DashMetrics = ({
   userCount,
+  dailyUserCounts, // New prop to pass daily user counts
   totalViews,
   activeUsers,
-  newSignUps,
   totalFeedback,
   loading,
   isDarkMode, // Receive isDarkMode as a prop to customize styles based on dark/light mode
@@ -13,15 +13,34 @@ const DashMetrics = ({
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const metricsData = [
-    { title: "Total Users", value: userCount, icon: <FaRegUserCircle /> },
-    { title: "Total Views", value: totalViews, icon: <FaEye /> },
-    { title: "Active Users", value: activeUsers, icon: <FaUsers /> },
     {
-      title: "New Sign-Ups Today",
-      value: newSignUps,
+      title: "Total Users",
+      value: userCount || "No data available", // Fallback value if no userCount
       icon: <FaRegUserCircle />,
     },
-    { title: "Total Feedback", value: totalFeedback, icon: <FaComments /> },
+    {
+      title: "Total Views",
+      value: totalViews || "No data available", // Fallback value if no totalViews
+      icon: <FaEye />,
+    },
+    {
+      title: "Active Users",
+      value: activeUsers || "No data available", // Fallback value if no activeUsers
+      icon: <FaUsers />,
+    },
+    {
+      title: "Daily User Sign-Ups (Last 30 Days)",
+      value:
+        dailyUserCounts && dailyUserCounts.length
+          ? `${dailyUserCounts.length} Days of Data`
+          : "No data available", // Check for dailyUserCounts length
+      icon: <FaRegUserCircle />,
+    },
+    {
+      title: "Total Feedback",
+      value: totalFeedback || "No data available", // Fallback value if no totalFeedback
+      icon: <FaComments />,
+    },
   ];
 
   // Show a loading spinner while the data is being fetched
@@ -71,7 +90,8 @@ const DashMetrics = ({
           <div>
             <h4 style={{ margin: "0 0 10px" }}>{metric.title}</h4>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-              {metric.value || "Not available"}
+              {metric.value || "Not available"}{" "}
+              {/* Display "Not available" if value is empty */}
             </p>
           </div>
           <span style={{ fontSize: "1.5rem" }}>{metric.icon}</span>

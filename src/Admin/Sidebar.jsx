@@ -61,7 +61,7 @@ const Sidebar = ({ isDarkMode, toggleMode }) => {
   };
 
   const hoveredLinkStyle = {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#4cafad",
   };
 
   const linkTextStyle = {
