@@ -9,9 +9,8 @@ import random
 import smtplib
 import bcrypt
 import os
-from dotenv import load_dotenv
 
-# Constants
+
 SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")
 PASSWORD_RESET_EXPIRE_MINUTES = 30
 OTP_EXPIRE_MINUTES = 5
@@ -23,21 +22,17 @@ SMTP_PORT = 587
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 
-
-
 logging.basicConfig(level=logging.INFO)
-
-load_dotenv()
 
 class ForgetPasswordRequest(BaseModel):
     email: EmailStr
 
-def send_otp_email(to_email: str, otp: str):
+async def send_otp_email(to_email: str, otp: str):
     try:
         logging.info(f"Sending OTP to {to_email}")
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()  # Secure the connection
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)  # Authenticate with Gmail
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
         
         subject = "Your Password Reset OTP"
         body = f"Your OTP for password reset is: {otp}. This OTP will expire in 5 minutes."
@@ -89,7 +84,7 @@ async def reset_password(token: str, new_password: str, otp: str, db: Session):
     
     hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     user.password_hash = hashed_password
-    user.otp = None  # Clear OTP after successful reset
+    user.otp = None 
     user.otp_expiry = None
     db.commit()
 
