@@ -48,11 +48,12 @@ function AdminDash({ isDarkMode, toggleMode }) {
 
         setUserCount(response.data.totalUserCount || "Not available");
 
+        // Get today's date in YYYY-MM-DD format
         const today = new Date().toISOString().split("T")[0];
         const todayData = response.data.dailyUserCounts?.find(
           (item) => item.date === today
         );
-        setNewSignUps(todayData?.count || 0);
+        setNewSignUps(todayData?.user_count || 0);
       } catch (err) {
         console.error("Error fetching data:", err.message);
         setError("Failed to fetch data. Please try again later.");
