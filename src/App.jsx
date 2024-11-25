@@ -4,8 +4,8 @@ import Home from "./Home";
 import Login from "./Login";
 import Register from "./Register";
 import Forgot_pass from "./Forgot_pass";
-import AdminDash from "./Admin/AdminDash"; // Make sure this is the correct path for your AdminDash component
-import Sidebar from "./Admin/Sidebar";
+import AdminDash from "./Admin/AdminDash"; // Correct path
+import Sidebar from "./Admin/Sidebar"; // Correct path
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -21,6 +21,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/ForgetPassword' element={<Forgot_pass />} />
+
         {/* Pass isDarkMode and toggleMode to AdminDash */}
         <Route
           path='/admin'

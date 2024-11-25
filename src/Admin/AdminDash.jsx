@@ -7,7 +7,7 @@ import UserActivityChart from "./UserActivityChart"; // Chart showing user activ
 import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Activity heatmap chart
 
 // Container styles for dark mode
-const containerStyle = isDarkMode => ({
+const containerStyle = (isDarkMode) => ({
   display: "flex",
   height: "100vh",
   width: "100vw",
@@ -23,7 +23,7 @@ const mainStyle = {
 };
 
 // Content area style based on dark mode
-const contentStyle = isDarkMode => ({
+const contentStyle = (isDarkMode) => ({
   flex: 1,
   backgroundColor: isDarkMode ? "#444" : "white",
   padding: "20px",
@@ -50,54 +50,43 @@ function AdminDash({ isDarkMode, toggleMode }) {
   const [loading, setLoading] = useState(true); // State for loading indicator
   const [error, setError] = useState(null); // State for error handling
 
-  // Fetch user count and daily sign-ups from the API
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/user-count-details?days=30"
+          "http://172.22.30.136:8000/api/user-count-details?days=30"
         );
-        console.log("API Response:", response.data); // Log API response
+        console.log("API Response:", response.data); // Log API response for debugging
 
-        // Check and set the total user count
         if (response.data && response.data.totalUserCount !== undefined) {
           setUserCount(response.data.totalUserCount);
         } else {
           setUserCount("No data available");
         }
 
-        // Check and set daily user counts (new sign-ups today)
+        // Handling daily user counts
         if (
           response.data.dailyUserCounts &&
           response.data.dailyUserCounts.length > 0
         ) {
-          // Get today's date
-          const today = new Date().toISOString().split("T")[0]; // Get the date in YYYY-MM-DD format
-
-          // Find today's sign-up count in the dailyUserCounts array
+          const today = new Date().toISOString().split("T")[0]; // Get today's date
           const todayData = response.data.dailyUserCounts.find(
-            item => item.date === today
+            (item) => item.date === today
           );
-
-          // If data for today is available, use it; otherwise, set to 0
-          if (todayData) {
-            setNewSignUps(todayData.count);
-          } else {
-            setNewSignUps(0); // No sign-ups today
-          }
+          setNewSignUps(todayData ? todayData.count : 0);
         } else {
-          setNewSignUps(0); // No data available
+          setNewSignUps(0); // No data for today
         }
       } catch (err) {
-        console.error("API error:", err); // Log any API errors
+        console.error("API error:", err); // Log API error
         setError("Error fetching data");
       } finally {
-        setLoading(false); // Stop loading once the data is fetched
+        setLoading(false); // Stop loading when data fetching is done
       }
     };
 
     fetchUserCount();
-  }, []); // Empty dependency array ensures this only runs once after the component mounts
+  }, []); // Empty dependency array makes this effect run only once after the component mounts
 
   // Conditional rendering for loading state and the DashMetrics component
   return (

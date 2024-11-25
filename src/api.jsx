@@ -1,8 +1,8 @@
 // api.jsx
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000', // Ensure this matches your FastAPI server
+  baseURL: "http://172.22.30.136:8000", // Updated to the correct backend server IP
 });
 
 export default api;
