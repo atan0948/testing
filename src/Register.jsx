@@ -59,18 +59,28 @@ const linkButtonStyle = {
 
 const Register = () => {
   const [values, setValues] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
   const [error, setError] = useState(null);
+  const [passwordWarning, setPasswordWarning] = useState(null); // To hold password warning
   const navigate = useNavigate();
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError(null); // Reset error state
+    setPasswordWarning(null); // Reset password warning state
+
+    // Check if password is too short
+    if (values.password.length < 6) {
+      setPasswordWarning(
+        "Your password is too short. It is recommended to use a stronger password."
+      );
+    }
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("http://172.22.30.136:8000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,12 +91,12 @@ const Register = () => {
       const result = await response.json();
 
       if (response.ok) {
-        console.log("Registration successful:", result);
         navigate("/login"); // Navigate to login page after registration
       } else {
-        setError(result.message || "An error occurred. Please try again.");
+        setError(result.detail || "An error occurred. Please try again.");
       }
-    } catch (error) {
+    } catch (err) {
+      console.error("Network error:", err);
       setError("Network error. Please try again.");
     }
   };
@@ -94,16 +104,7 @@ const Register = () => {
   return (
     <div style={containerStyle}>
       <div style={formContainerStyle}>
-        <h2
-          style={{
-            textAlign: "center",
-            color: "#000",
-            fontSize: "2.25rem",
-            marginBottom: "20px",
-          }}
-        >
-          Sign-Up
-        </h2>
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Sign-Up</h2>
         {error && (
           <div
             style={{ color: "red", textAlign: "center", marginBottom: "15px" }}
@@ -111,21 +112,33 @@ const Register = () => {
             {error}
           </div>
         )}
+        {passwordWarning && (
+          <div
+            style={{
+              color: "orange",
+              textAlign: "center",
+              marginBottom: "15px",
+            }}
+          >
+            {passwordWarning}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div>
             <label
-              htmlFor='name'
+              htmlFor='username'
               style={{ fontSize: "1rem", marginBottom: "8px" }}
             >
-              <strong>Name</strong>
+              <strong>Username</strong>
             </label>
             <input
               type='text'
-              id='name'
-              placeholder='Enter Name'
-              name='name'
-              value={values.name}
-              onChange={e => setValues({ ...values, name: e.target.value })}
+              id='username'
+              name='username'
+              value={values.username}
+              onChange={(e) =>
+                setValues({ ...values, username: e.target.value })
+              }
               style={inputStyle}
               required
             />
@@ -140,10 +153,9 @@ const Register = () => {
             <input
               type='email'
               id='email'
-              placeholder='Enter Email'
               name='email'
               value={values.email}
-              onChange={e => setValues({ ...values, email: e.target.value })}
+              onChange={(e) => setValues({ ...values, email: e.target.value })}
               style={inputStyle}
               required
             />
@@ -158,26 +170,20 @@ const Register = () => {
             <input
               type='password'
               id='password'
-              placeholder='Enter Password'
               name='password'
               value={values.password}
-              onChange={e => setValues({ ...values, password: e.target.value })}
+              onChange={(e) =>
+                setValues({ ...values, password: e.target.value })
+              }
               style={inputStyle}
               required
-              autoComplete='new-password' // Add the correct autocomplete value for registration
             />
           </div>
           <button type='submit' style={buttonStyle}>
             Sign Up
           </button>
-          <p style={{ textAlign: "center", marginTop: "10px" }}>
-            You agree to our{" "}
-            <a href='/terms' style={{ color: "#007bff" }}>
-              terms and policies
-            </a>
-          </p>
         </form>
-        <Link to='/' style={linkButtonStyle}>
+        <Link to='/login' style={linkButtonStyle}>
           Go to Login
         </Link>
       </div>

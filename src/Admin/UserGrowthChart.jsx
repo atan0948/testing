@@ -18,7 +18,7 @@ const userData = [
 ];
 
 const UserGrowthChart = () => (
-  <ResponsiveContainer width='100%' height={300}>
+  <ResponsiveContainer width='150%' height={300}>
     <LineChart
       data={userData}
       margin={{ top: 20, right: 20, left: 20, bottom: 5 }}

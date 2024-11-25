@@ -3,54 +3,41 @@ import { FaRegUserCircle, FaEye, FaComments, FaUsers } from "react-icons/fa";
 
 const DashMetrics = ({
   userCount,
-  newSignUps, // Prop to pass new user sign-ups for today
+  newSignUps,
   totalViews,
   activeUsers,
   totalFeedback,
-  loading,
-  isDarkMode, // Receive isDarkMode as a prop to customize styles based on dark/light mode
+  isDarkMode,
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const metricsData = [
     {
       title: "Total Users",
-      value: userCount || "No data available", // Fallback value if no userCount
+      value: userCount || "Not available",
       icon: <FaRegUserCircle />,
     },
     {
       title: "Total Views",
-      value: totalViews || "No data available", // Fallback value if no totalViews
+      value: totalViews || "Not available",
       icon: <FaEye />,
     },
     {
       title: "Active Users",
-      value: activeUsers || "No data available", // Fallback value if no activeUsers
+      value: activeUsers || "Not available",
       icon: <FaUsers />,
     },
     {
-      title: "Daily User Sign-Ups (Today)",
-      value:
-        newSignUps !== null
-          ? `${newSignUps} Sign-Ups Today`
-          : "No data available", // Show today's sign-ups
+      title: "Daily User Sign-Ups",
+      value: `${newSignUps || 0} Sign-Ups Today`,
       icon: <FaRegUserCircle />,
     },
     {
       title: "Total Feedback",
-      value: totalFeedback || "No data available", // Fallback value if no totalFeedback
+      value: totalFeedback || "Not available",
       icon: <FaComments />,
     },
   ];
-
-  // Show a loading spinner while the data is being fetched
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -72,11 +59,11 @@ const DashMetrics = ({
               hoveredIndex === index
                 ? isDarkMode
                   ? "#555"
-                  : "#ced4da" // Darker background on hover in dark mode
+                  : "#ced4da"
                 : isDarkMode
                 ? "#333"
-                : "#e9ecef", // Default dark or light background
-            color: isDarkMode ? "#fff" : "#000", // Ensure text is always readable
+                : "#e9ecef",
+            color: isDarkMode ? "#fff" : "#000",
             padding: "8px 15px",
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
@@ -90,8 +77,7 @@ const DashMetrics = ({
           <div>
             <h4 style={{ margin: "0 0 10px" }}>{metric.title}</h4>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-              {metric.value || "Not available"}{" "}
-              {/* Display "Not available" if value is empty */}
+              {metric.value}
             </p>
           </div>
           <span style={{ fontSize: "1.5rem" }}>{metric.icon}</span>

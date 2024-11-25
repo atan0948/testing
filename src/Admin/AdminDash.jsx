@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; // Sidebar component
-import DashMetrics from "./DashMetrics"; // Dashboard metrics component
-import UserGrowthChart from "./UserGrowthChart"; // Chart showing user growth
-import UserActivityChart from "./UserActivityChart"; // Chart showing user activity
-import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Activity heatmap chart
+import Sidebar from "./Sidebar";
+import DashMetrics from "./DashMetrics";
+import UserGrowthChart from "./UserGrowthChart";
 
-// Container styles for dark mode
+// Container styles
 const containerStyle = (isDarkMode) => ({
   display: "flex",
   height: "100vh",
@@ -15,14 +13,8 @@ const containerStyle = (isDarkMode) => ({
   backgroundColor: isDarkMode ? "#333" : "#f8f9fa",
 });
 
-// Main content style
-const mainStyle = {
-  display: "flex",
-  flexDirection: "column",
-  flex: 1,
-};
-
-// Content area style based on dark mode
+// Main and content styles
+const mainStyle = { display: "flex", flexDirection: "column", flex: 1 };
 const contentStyle = (isDarkMode) => ({
   flex: 1,
   backgroundColor: isDarkMode ? "#444" : "white",
@@ -31,7 +23,6 @@ const contentStyle = (isDarkMode) => ({
   color: isDarkMode ? "#fff" : "#000",
 });
 
-// Grid layout for the charts
 const chartContainerStyle = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
@@ -40,15 +31,13 @@ const chartContainerStyle = {
 };
 
 function AdminDash({ isDarkMode, toggleMode }) {
-  // State for holding user metrics and chart data
-  const [userCount, setUserCount] = useState(null); // For user count
-  const [newSignUps, setNewSignUps] = useState(0); // For today's new sign-ups
-  const [totalViews, setTotalViews] = useState("2,300"); // Placeholder value
-  const [activeUsers, setActiveUsers] = useState("300"); // Placeholder value
-  const [totalFeedback, setTotalFeedback] = useState("150"); // Placeholder value
-
-  const [loading, setLoading] = useState(true); // State for loading indicator
-  const [error, setError] = useState(null); // State for error handling
+  const [userCount, setUserCount] = useState(null);
+  const [newSignUps, setNewSignUps] = useState(0);
+  const [totalViews, setTotalViews] = useState("2,300");
+  const [activeUsers, setActiveUsers] = useState("300");
+  const [totalFeedback, setTotalFeedback] = useState("150");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserCount = async () => {
@@ -56,84 +45,54 @@ function AdminDash({ isDarkMode, toggleMode }) {
         const response = await axios.get(
           "http://172.22.30.136:8000/api/user-count-details?days=30"
         );
-        console.log("API Response:", response.data); // Log API response for debugging
 
-        if (response.data && response.data.totalUserCount !== undefined) {
-          setUserCount(response.data.totalUserCount);
-        } else {
-          setUserCount("No data available");
-        }
+        setUserCount(response.data.totalUserCount || "Not available");
 
-        // Handling daily user counts
-        if (
-          response.data.dailyUserCounts &&
-          response.data.dailyUserCounts.length > 0
-        ) {
-          const today = new Date().toISOString().split("T")[0]; // Get today's date
-          const todayData = response.data.dailyUserCounts.find(
-            (item) => item.date === today
-          );
-          setNewSignUps(todayData ? todayData.count : 0);
-        } else {
-          setNewSignUps(0); // No data for today
-        }
+        const today = new Date().toISOString().split("T")[0];
+        const todayData = response.data.dailyUserCounts?.find(
+          (item) => item.date === today
+        );
+        setNewSignUps(todayData?.count || 0);
       } catch (err) {
-        console.error("API error:", err); // Log API error
-        setError("Error fetching data");
+        console.error("Error fetching data:", err.message);
+        setError("Failed to fetch data. Please try again later.");
       } finally {
-        setLoading(false); // Stop loading when data fetching is done
+        setLoading(false);
       }
     };
 
     fetchUserCount();
-  }, []); // Empty dependency array makes this effect run only once after the component mounts
+  }, []);
 
-  // Conditional rendering for loading state and the DashMetrics component
   return (
     <div style={containerStyle(isDarkMode)}>
-      {/* Sidebar Component */}
       <Sidebar isDarkMode={isDarkMode} toggleMode={toggleMode} />
-
       <div style={mainStyle}>
         <div style={contentStyle(isDarkMode)}>
-          <h2>Main Content Area</h2>
+          <h2>Admin Dashboard</h2>
 
-          {/* Error handling */}
-          {error && <p style={{ color: "red" }}>{error}</p>}
-
-          {/* Show loading state */}
-          {loading && <p>Loading...</p>}
-
-          {/* Show DashMetrics only when loading is false */}
-          {!loading && (
-            <DashMetrics
-              userCount={userCount || "No data available"} // Fallback value if no data
-              newSignUps={newSignUps} // Pass 0 or the actual count if available
-              totalViews={totalViews}
-              activeUsers={activeUsers}
-              totalFeedback={totalFeedback}
-              loading={loading}
-              isDarkMode={isDarkMode}
-            />
+          {error ? (
+            <p style={{ color: "red" }}>{error}</p>
+          ) : loading ? (
+            <p>Loading...</p>
+          ) : (
+            <>
+              <DashMetrics
+                userCount={userCount}
+                newSignUps={newSignUps}
+                totalViews={totalViews}
+                activeUsers={activeUsers}
+                totalFeedback={totalFeedback}
+                isDarkMode={isDarkMode}
+              />
+              <div style={chartContainerStyle}>
+                <div>
+                  <h4>User Growth Over Time</h4>
+                  <UserGrowthChart />
+                </div>
+              </div>
+            </>
           )}
-
-          <h3>User Insights</h3>
-
-          {/* Chart Layout */}
-          <div style={chartContainerStyle}>
-            <div>
-              <h4>User Growth Over Time</h4>
-              <UserGrowthChart />
-            </div>
-            <div>
-              <h4>Active vs Inactive Users</h4>
-              <UserActivityChart />
-            </div>
-            <div style={{ marginTop: "20px" }}>
-              <h4>Daily Activity Heatmap</h4>
-              <ActivityHeatmapChart />
-            </div>
-          </div>
         </div>
       </div>
     </div>
