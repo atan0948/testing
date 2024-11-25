@@ -4,14 +4,28 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from .db import get_db, User
 from datetime import timedelta, datetime
+import pytz
+from pydantic import BaseModel
+from typing import List
 
 router = APIRouter()
 
-@router.get("/user-count-details")
+class DailyUserCount(BaseModel):
+    date: str
+    user_count: int
+
+class UserCountResponse(BaseModel):
+    totalUserCount: int
+    dailyUserCounts: List[DailyUserCount]
+
+
+@router.get("/user-count-details", response_model=UserCountResponse)
 async def get_user_count_details(days: int = 30, db: Session = Depends(get_db)):
-    today = datetime.utcnow()
+    # Get current time in UTC or adjust to a local timezone
+    tz = pytz.timezone('UTC')  # Set to your desired timezone, or 'UTC' for UTC timezone
+    today = datetime.now(tz)  # Using timezone-aware datetime
     start_date = today - timedelta(days=days)
-    
+
     # Total user count (all users in the system)
     total_count = db.query(User).count()
 
@@ -20,6 +34,16 @@ async def get_user_count_details(days: int = 30, db: Session = Depends(get_db)):
         func.date(User.created_at).label("date"), func.count().label("user_count")
     ).filter(User.created_at >= start_date).group_by(func.date(User.created_at)).all()
     
-    daily_user_counts = [{"date": str(date), "user_count": user_count} for date, user_count in daily_counts]
-    
-    return JSONResponse(content={"totalUserCount": total_count, "dailyUserCounts": daily_user_counts})
+    # Create a dictionary to easily check the counts by date
+    daily_user_counts = {str(date): user_count for date, user_count in daily_counts}
+
+    # Create a list of dictionaries, filling in any missing days with a count of 0
+    result = []
+    for i in range(days):
+        date = (start_date + timedelta(days=i)).date()  # Date for the current iteration
+        date_str = str(date)
+        user_count = daily_user_counts.get(date_str, 0)  # Default to 0 if no signups on that day
+        result.append(DailyUserCount(date=date_str, user_count=user_count))
+
+    # Return the structured response with Pydantic models
+    return UserCountResponse(totalUserCount=total_count, dailyUserCounts=result)
