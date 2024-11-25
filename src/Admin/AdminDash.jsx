@@ -7,7 +7,7 @@ import UserActivityChart from "./UserActivityChart"; // Chart showing user activ
 import ActivityHeatmapChart from "./ActivityHeatmapChart"; // Activity heatmap chart
 
 // Container styles for dark mode
-const containerStyle = (isDarkMode) => ({
+const containerStyle = isDarkMode => ({
   display: "flex",
   height: "100vh",
   width: "100vw",
@@ -23,7 +23,7 @@ const mainStyle = {
 };
 
 // Content area style based on dark mode
-const contentStyle = (isDarkMode) => ({
+const contentStyle = isDarkMode => ({
   flex: 1,
   backgroundColor: isDarkMode ? "#444" : "white",
   padding: "20px",
@@ -42,7 +42,7 @@ const chartContainerStyle = {
 function AdminDash({ isDarkMode, toggleMode }) {
   // State for holding user metrics and chart data
   const [userCount, setUserCount] = useState(null); // For user count
-  const [newSignUps, setNewSignUps] = useState("50"); // Placeholder value for daily sign-ups
+  const [newSignUps, setNewSignUps] = useState(0); // For today's new sign-ups
   const [totalViews, setTotalViews] = useState("2,300"); // Placeholder value
   const [activeUsers, setActiveUsers] = useState("300"); // Placeholder value
   const [totalFeedback, setTotalFeedback] = useState("150"); // Placeholder value
@@ -71,9 +71,22 @@ function AdminDash({ isDarkMode, toggleMode }) {
           response.data.dailyUserCounts &&
           response.data.dailyUserCounts.length > 0
         ) {
-          setNewSignUps(response.data.dailyUserCounts);
+          // Get today's date
+          const today = new Date().toISOString().split("T")[0]; // Get the date in YYYY-MM-DD format
+
+          // Find today's sign-up count in the dailyUserCounts array
+          const todayData = response.data.dailyUserCounts.find(
+            item => item.date === today
+          );
+
+          // If data for today is available, use it; otherwise, set to 0
+          if (todayData) {
+            setNewSignUps(todayData.count);
+          } else {
+            setNewSignUps(0); // No sign-ups today
+          }
         } else {
-          setNewSignUps("No data available");
+          setNewSignUps(0); // No data available
         }
       } catch (err) {
         console.error("API error:", err); // Log any API errors
@@ -85,9 +98,6 @@ function AdminDash({ isDarkMode, toggleMode }) {
 
     fetchUserCount();
   }, []); // Empty dependency array ensures this only runs once after the component mounts
-
-  console.log("userCount:", userCount); // Debug log userCount state
-  console.log("newSignUps:", newSignUps); // Debug log newSignUps state
 
   // Conditional rendering for loading state and the DashMetrics component
   return (
@@ -109,11 +119,12 @@ function AdminDash({ isDarkMode, toggleMode }) {
           {!loading && (
             <DashMetrics
               userCount={userCount || "No data available"} // Fallback value if no data
-              newSignUps={newSignUps || "No data available"} // Fallback value if no data
+              newSignUps={newSignUps} // Pass 0 or the actual count if available
               totalViews={totalViews}
               activeUsers={activeUsers}
               totalFeedback={totalFeedback}
               loading={loading}
+              isDarkMode={isDarkMode}
             />
           )}
 

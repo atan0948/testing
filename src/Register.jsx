@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const containerStyle = {
   display: "grid",
@@ -8,7 +8,7 @@ const containerStyle = {
   height: "100vh",
   width: "100vw",
   margin: "0",
-  padding: "20px", // Add some padding for smaller screens
+  padding: "20px",
   boxSizing: "border-box",
 };
 
@@ -17,7 +17,7 @@ const formContainerStyle = {
   padding: "40px",
   borderRadius: "8px",
   width: "100%",
-  maxWidth: "400px", // Max width for larger screens
+  maxWidth: "400px",
   boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
   display: "flex",
   flexDirection: "column",
@@ -63,10 +63,32 @@ const Register = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
-    console.log(values); // For example, log values to console
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        console.log("Registration successful:", result);
+        navigate("/login"); // Navigate to login page after registration
+      } else {
+        setError(result.message || "An error occurred. Please try again.");
+      }
+    } catch (error) {
+      setError("Network error. Please try again.");
+    }
   };
 
   return (
@@ -82,6 +104,13 @@ const Register = () => {
         >
           Sign-Up
         </h2>
+        {error && (
+          <div
+            style={{ color: "red", textAlign: "center", marginBottom: "15px" }}
+          >
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div>
             <label
@@ -96,7 +125,7 @@ const Register = () => {
               placeholder='Enter Name'
               name='name'
               value={values.name}
-              onChange={(e) => setValues({ ...values, name: e.target.value })}
+              onChange={e => setValues({ ...values, name: e.target.value })}
               style={inputStyle}
               required
             />
@@ -114,7 +143,7 @@ const Register = () => {
               placeholder='Enter Email'
               name='email'
               value={values.email}
-              onChange={(e) => setValues({ ...values, email: e.target.value })}
+              onChange={e => setValues({ ...values, email: e.target.value })}
               style={inputStyle}
               required
             />
@@ -132,18 +161,20 @@ const Register = () => {
               placeholder='Enter Password'
               name='password'
               value={values.password}
-              onChange={(e) =>
-                setValues({ ...values, password: e.target.value })
-              }
+              onChange={e => setValues({ ...values, password: e.target.value })}
               style={inputStyle}
               required
+              autoComplete='new-password' // Add the correct autocomplete value for registration
             />
           </div>
           <button type='submit' style={buttonStyle}>
             Sign Up
           </button>
           <p style={{ textAlign: "center", marginTop: "10px" }}>
-            You agree to our terms and policies
+            You agree to our{" "}
+            <a href='/terms' style={{ color: "#007bff" }}>
+              terms and policies
+            </a>
           </p>
         </form>
         <Link to='/' style={linkButtonStyle}>

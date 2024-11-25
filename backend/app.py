@@ -7,7 +7,7 @@ from .fileupload.upload import router as upload_router
 from .user_count import router as get_user_count
 from .pass_forgot import forgot_password, reset_password, ForgetPasswordRequest
 from dotenv import load_dotenv
-from .user_growth import get_user_growth_per_month
+from .user_growth import router as user_growth_router
 
 app = FastAPI()
 
@@ -35,7 +35,7 @@ app.include_router(upload_router, prefix="/api", tags=["uploads"])
 app.include_router(get_user_count, prefix="/api", tags=["user_count"])
 
 #user count per months
-app.include_router(get_user_growth_per_month="/api", tags=["monthly"])
+app.include_router(user_growth_router, prefix="/api", tags=["user_growth"])
 
 # Route for user registration
 @app.post("/register")

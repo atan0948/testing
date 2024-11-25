@@ -3,7 +3,7 @@ import { FaRegUserCircle, FaEye, FaComments, FaUsers } from "react-icons/fa";
 
 const DashMetrics = ({
   userCount,
-  dailyUserCounts, // New prop to pass daily user counts
+  newSignUps, // Prop to pass new user sign-ups for today
   totalViews,
   activeUsers,
   totalFeedback,
@@ -29,11 +29,11 @@ const DashMetrics = ({
       icon: <FaUsers />,
     },
     {
-      title: "Daily User Sign-Ups (Last 30 Days)",
+      title: "Daily User Sign-Ups (Today)",
       value:
-        dailyUserCounts && dailyUserCounts.length
-          ? `${dailyUserCounts.length} Days of Data`
-          : "No data available", // Check for dailyUserCounts length
+        newSignUps !== null
+          ? `${newSignUps} Sign-Ups Today`
+          : "No data available", // Show today's sign-ups
       icon: <FaRegUserCircle />,
     },
     {
