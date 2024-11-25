@@ -7,9 +7,9 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from .db import User, get_db
 from datetime import datetime, timedelta
+import secrets
 
-# Constants
-SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")
+SECRET_KEY = os.getenv("SECRET_KEY", secrets.token_hex(64))
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
