@@ -12,142 +12,153 @@ import {
 const Sidebar = ({ isDarkMode, toggleMode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Initially collapsed
 
+  // Function to toggle the sidebar open or closed
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // Define base background color for light and dark modes
-  const baseBackgroundColor = isDarkMode ? "#333" : "#e6e6e6"; // White for light mode and dark for dark mode
-  const collapsedBackgroundColor = isDarkMode ? "#444" : "#fff"; // Slightly darker background for collapsed state
+  // Define background color based on light/dark mode
+  const baseBackgroundColor = isDarkMode ? "#333" : "#e6e6e6"; // Dark mode background vs light mode background
+  const collapsedBackgroundColor = isDarkMode ? "#444" : "#fff"; // Different background color when collapsed
 
+  // Sidebar styles that change dynamically based on the state (open/collapsed) and mode (light/dark)
   const sidebarStyle = {
     backgroundColor: isSidebarOpen
       ? baseBackgroundColor
-      : collapsedBackgroundColor,
-    color: isDarkMode ? "#fff" : "#000",
-    height: "100vh",
-    width: isSidebarOpen ? "250px" : "80px", // Sidebar width changes based on state
-    transition: "width 0.3s ease, background-color 0.3s ease", // Smooth transition for width and background
-    padding: "20px",
-    boxSizing: "border-box",
+      : collapsedBackgroundColor, // Changes background color based on sidebar state
+    color: isDarkMode ? "#fff" : "#000", // Text color depending on dark/light mode
+    height: "100vh", // Full height of the sidebar
+    width: isSidebarOpen ? "250px" : "80px", // Sidebar width changes when open/closed
+    transition: "width 0.3s ease, background-color 0.3s ease", // Smooth transition for width and background color
+    padding: "20px", // Padding for inner elements
+    boxSizing: "border-box", // Ensures padding is included in the element's total width/height
   };
 
+  // Styles for the profile section, only visible when the sidebar is open
   const profileStyle = {
-    display: isSidebarOpen ? "flex" : "none", // Show only when sidebar is open
-    alignItems: "center",
-    marginBottom: "20px",
+    display: isSidebarOpen ? "flex" : "none", // Show profile when sidebar is open
+    alignItems: "center", // Align items vertically
+    marginBottom: "20px", // Space below the profile section
   };
 
+  // Profile picture styling
   const avatarStyle = {
-    width: "60px", // Adjusted size
-    height: "60px", // Adjusted size
-    borderRadius: "50%",
-    marginRight: "15px",
+    width: "60px", // Avatar size
+    height: "60px", // Avatar size
+    borderRadius: "50%", // Circular shape for the avatar
+    marginRight: "15px", // Space between avatar and username
   };
 
+  // Styling for the user's name
   const userNameStyle = {
-    fontSize: "1.2rem",
-    fontWeight: "bold",
-    display: isSidebarOpen ? "inline" : "none", // Show name only when sidebar is open
+    fontSize: "1.2rem", // Font size for the name
+    fontWeight: "bold", // Bold font for the name
+    display: isSidebarOpen ? "inline" : "none", // Name is only visible when sidebar is open
   };
 
+  // Common styles for navigation links
   const linkStyle = {
-    padding: "10px 15px",
-    color: isDarkMode ? "#fff" : "#000",
-    textDecoration: "none",
-    display: "flex",
-    alignItems: "center",
-    transition: "background-color 0.3s ease",
-    borderRadius: "5px",
-    marginBottom: "10px",
+    padding: "10px 15px", // Padding inside the link
+    color: isDarkMode ? "#fff" : "#000", // Text color based on mode
+    textDecoration: "none", // Remove underline from links
+    display: "flex", // Flexbox layout for icon and text
+    alignItems: "center", // Center align the icon and text vertically
+    transition: "background-color 0.3s ease", // Smooth transition for background color on hover
+    borderRadius: "5px", // Rounded corners
+    marginBottom: "10px", // Space between links
   };
 
+  // Hover effect for links
   const hoveredLinkStyle = {
-    backgroundColor: "#4cafad",
+    backgroundColor: "#4cafad", // Background color on hover
   };
 
+  // Styling for the text next to the icons in the links
   const linkTextStyle = {
-    marginLeft: "10px", // Spacing between icon and text
-    display: isSidebarOpen ? "inline" : "none", // Only show text when sidebar is open
+    marginLeft: "10px", // Space between the icon and text
+    display: isSidebarOpen ? "inline" : "none", // Text is only visible when sidebar is open
   };
 
+  // Styling for the icons in the links
   const iconStyle = {
     fontSize: "1.5rem", // Icon size
-    display: isSidebarOpen ? "inline" : "none", // Only show icon when sidebar is open
+    display: isSidebarOpen ? "inline" : "none", // Icon is only visible when sidebar is open
   };
 
   return (
     <div style={sidebarStyle}>
       {/* Hamburger Icon for Sidebar Toggle */}
       <button
-        onClick={toggleSidebar}
+        onClick={toggleSidebar} // Toggle sidebar visibility
         style={{
           marginBottom: "20px",
           padding: "10px 15px",
-          background: "#ccc",
+          background: "#ccc", // Background color for the button
           border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          display: "block", // Always show hamburger icon
+          borderRadius: "5px", // Rounded corners
+          cursor: "pointer", // Pointer cursor on hover
+          display: "block", // Always show the hamburger icon
         }}
       >
-        <FaBars />
+        <FaBars /> {/* Hamburger icon to toggle the sidebar */}
       </button>
 
       {/* User Profile */}
       <div style={profileStyle}>
-        <img src='/profile-pic.jfif' alt='User Avatar' style={avatarStyle} />
-        <span style={userNameStyle}>User Name</span>
+        <img src='/profile-pic.jfif' alt='User Avatar' style={avatarStyle} />{" "}
+        {/* User profile picture */}
+        <span style={userNameStyle}>User Name</span> {/* User name */}
       </div>
 
       {/* Links */}
       <div>
         <a
           href='#'
-          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
         >
-          <FaHome style={iconStyle} />
-          <span style={linkTextStyle}>Home</span>
+          <FaHome style={iconStyle} /> {/* Home icon */}
+          <span style={linkTextStyle}>Home</span> {/* Home text */}
         </a>
         <a
           href='#'
-          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
         >
-          <FaUsers style={iconStyle} />
-          <span style={linkTextStyle}>Users</span>
+          <FaUsers style={iconStyle} /> {/* Users icon */}
+          <span style={linkTextStyle}>Users</span> {/* Users text */}
         </a>
         <a
           href='#'
-          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
         >
-          <FaChartBar style={iconStyle} />
-          <span style={linkTextStyle}>Analytics</span>
+          <FaChartBar style={iconStyle} /> {/* Analytics icon */}
+          <span style={linkTextStyle}>Analytics</span> {/* Analytics text */}
         </a>
         <a
           href='#'
-          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }}
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
         >
-          <FaCog style={iconStyle} />
-          <span style={linkTextStyle}>Settings</span>
+          <FaCog style={iconStyle} /> {/* Settings icon */}
+          <span style={linkTextStyle}>Settings</span> {/* Settings text */}
         </a>
       </div>
 
       {/* Dark Mode Toggle */}
       <button
-        onClick={toggleMode}
+        onClick={toggleMode} // Function to toggle between dark and light mode
         style={{
           marginTop: "20px",
           padding: "10px 15px",
-          background: isDarkMode ? "#444" : "#ddd",
-          color: isDarkMode ? "#fff" : "#000",
+          background: isDarkMode ? "#444" : "#ddd", // Background color for the button
+          color: isDarkMode ? "#fff" : "#000", // Text color based on mode
           border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          display: isSidebarOpen ? "flex" : "none", // Only show dark mode button when sidebar is open
-          alignItems: "center",
+          borderRadius: "5px", // Rounded corners
+          cursor: "pointer", // Pointer cursor on hover
+          display: isSidebarOpen ? "flex" : "none", // Dark mode button visible only when sidebar is open
+          alignItems: "center", // Align button contents horizontally
         }}
       >
-        {isDarkMode ? <FaSun /> : <FaMoon />}
+        {isDarkMode ? <FaSun /> : <FaMoon />}{" "}
+        {/* Icon for dark or light mode */}
         <span style={{ marginLeft: "10px" }}>
-          {isDarkMode ? "Light Mode" : "Dark Mode"}
+          {isDarkMode ? "Light Mode" : "Dark Mode"} {/* Toggle text */}
         </span>
       </button>
     </div>

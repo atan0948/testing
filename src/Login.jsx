@@ -10,16 +10,16 @@ const containerStyle = {
   height: "100vh",
   width: "100vw",
   margin: "0",
-  padding: "20px", // Padding to prevent content from touching edges
-  boxSizing: "border-box", // Include padding in total width/height
+  padding: "20px",
+  boxSizing: "border-box",
 };
 
 const formContainerStyle = {
   backgroundColor: "#fff",
   padding: "40px",
   borderRadius: "8px",
-  width: "100%", // Use full width
-  maxWidth: "400px", // Maximum width for the form
+  width: "100%",
+  maxWidth: "400px",
   boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
   display: "flex",
   flexDirection: "column",
@@ -30,7 +30,7 @@ const inputStyle = {
   marginBottom: "18px",
   padding: "14px",
   borderRadius: "5px",
-  width: "100%", // Ensure inputs take full width
+  width: "100%",
   border: "1px solid #ccc",
   fontSize: "16px",
 };
@@ -41,7 +41,7 @@ const buttonStyle = {
   color: "#fff",
   border: "none",
   borderRadius: "5px",
-  width: "100%", // Button takes full width
+  width: "100%",
   cursor: "pointer",
   transition: "background-color 0.3s",
 };
@@ -51,13 +51,13 @@ const lineContainerStyle = {
   alignItems: "center",
   justifyContent: "center",
   marginTop: "1rem",
-  width: "100%", // Ensure this takes full width
+  width: "100%",
 };
 
 const hrStyle = {
   flex: 1,
   border: "1px solid #ccc",
-  margin: "0 10px", // Adjust horizontal margins for equal spacing
+  margin: "0 10px",
 };
 
 const signUpLinkStyle = {
@@ -74,16 +74,16 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // New state for error message
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setErrorMessage(""); // Clear any previous error message
 
     try {
       const response = await api.post("/login", { email, password });
-      console.log("Response:", response.data);
-
       if (response.data.access_token) {
         localStorage.setItem("token", response.data.access_token);
         api.defaults.headers.common[
@@ -91,21 +91,20 @@ const Login = () => {
         ] = `Bearer ${response.data.access_token}`;
         navigate("/home");
       } else {
-        alert(response.data.message || "Login failed. Please try again.");
+        setErrorMessage(
+          response.data.message || "Login failed. Please try again."
+        );
       }
     } catch (error) {
       console.error("Login error:", error);
       if (error.response) {
-        alert(
-          error.response.data.detail ||
-            "Login failed. Please check your credentials."
-        );
+        setErrorMessage(error.response.data.detail || "Login failed.");
       } else if (error.request) {
-        alert(
-          "No response from the server. Please check your network connection."
+        setErrorMessage(
+          "No response from the server. Please check your network."
         );
       } else {
-        alert("An error occurred: " + error.message);
+        setErrorMessage("An error occurred: " + error.message);
       }
     } finally {
       setLoading(false);
@@ -125,6 +124,13 @@ const Login = () => {
         >
           Sign In
         </h2>
+        {errorMessage && (
+          <div
+            style={{ color: "red", textAlign: "center", marginBottom: "15px" }}
+          >
+            {errorMessage}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div>
             <label
@@ -173,11 +179,7 @@ const Login = () => {
         </form>
         <div style={lineContainerStyle}>
           <hr style={hrStyle} />
-          <Link
-            to='/register'
-            className='text-blue-500 font-medium hover:underline'
-            style={signUpLinkStyle}
-          >
+          <Link to='/register' style={signUpLinkStyle}>
             Sign Up
           </Link>
           <hr style={hrStyle} />

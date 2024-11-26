@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+// Styles for the container, form, and input elements
 const containerStyle = {
   display: "grid",
   placeItems: "center",
@@ -58,21 +59,27 @@ const linkButtonStyle = {
 };
 
 const Register = () => {
+  // State for form values (username, email, password)
   const [values, setValues] = useState({
     username: "",
     email: "",
     password: "",
   });
+
+  // State for error messages and password warnings
   const [error, setError] = useState(null);
   const [passwordWarning, setPasswordWarning] = useState(null); // To hold password warning
+
+  // Hook to navigate to other routes after registration
   const navigate = useNavigate();
 
+  // Form submission handler
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Prevent form from reloading the page on submit
     setError(null); // Reset error state
     setPasswordWarning(null); // Reset password warning state
 
-    // Check if password is too short
+    // Check if the password is too short
     if (values.password.length < 6) {
       setPasswordWarning(
         "Your password is too short. It is recommended to use a stronger password."
@@ -80,22 +87,24 @@ const Register = () => {
     }
 
     try {
+      // Make a POST request to register the user
       const response = await fetch("http://172.22.30.136:8000/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", // Content type set to JSON
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(values), // Send the form values as JSON
       });
 
-      const result = await response.json();
+      const result = await response.json(); // Parse the JSON response from the API
 
       if (response.ok) {
-        navigate("/login"); // Navigate to login page after registration
+        navigate("/login"); // Navigate to login page after successful registration
       } else {
         setError(result.detail || "An error occurred. Please try again.");
       }
     } catch (err) {
+      // Handle network errors
       console.error("Network error:", err);
       setError("Network error. Please try again.");
     }
@@ -105,6 +114,8 @@ const Register = () => {
     <div style={containerStyle}>
       <div style={formContainerStyle}>
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Sign-Up</h2>
+
+        {/* Display error message if any */}
         {error && (
           <div
             style={{ color: "red", textAlign: "center", marginBottom: "15px" }}
@@ -112,6 +123,8 @@ const Register = () => {
             {error}
           </div>
         )}
+
+        {/* Display password warning if the password is too short */}
         {passwordWarning && (
           <div
             style={{
@@ -123,7 +136,9 @@ const Register = () => {
             {passwordWarning}
           </div>
         )}
+
         <form onSubmit={handleSubmit}>
+          {/* Username input */}
           <div>
             <label
               htmlFor='username'
@@ -143,6 +158,8 @@ const Register = () => {
               required
             />
           </div>
+
+          {/* Email input */}
           <div>
             <label
               htmlFor='email'
@@ -160,6 +177,8 @@ const Register = () => {
               required
             />
           </div>
+
+          {/* Password input */}
           <div>
             <label
               htmlFor='password'
@@ -179,10 +198,14 @@ const Register = () => {
               required
             />
           </div>
+
+          {/* Submit button */}
           <button type='submit' style={buttonStyle}>
             Sign Up
           </button>
         </form>
+
+        {/* Link to navigate to the login page */}
         <Link to='/login' style={linkButtonStyle}>
           Go to Login
         </Link>
