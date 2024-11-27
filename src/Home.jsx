@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import UploadedFile from "./UploadedFiles";
 import Sidebar from "./Admin/Sidebar";
-import UploadedFile from "./UploadedFiles";
 
 function Home({ isDarkMode, toggleMode }) {
   const containerStyle = {

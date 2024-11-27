@@ -8,6 +8,7 @@ from .fileupload.upload import router as upload_router
 from .user_count import router as get_user_count
 from .user_growth import router as user_growth_router
 from .pass_forgot import forgot_password, reset_password, ForgetPasswordRequest
+from .fileupload.uploadedfiles import router as uploady_file
 from fastapi import APIRouter
 
 # Initialize FastAPI app
@@ -29,8 +30,7 @@ app.add_middleware(
 app.include_router(upload_router, prefix="/api", tags=["uploads"])
 app.include_router(get_user_count, prefix="/api", tags=["user_count"])
 app.include_router(user_growth_router, prefix="/api", tags=["user_growth"])
-app.include_router(upload_router, prefix="/api", tags=["files"])
-
+app.include_router(uploady_file, prefix="/api", tags=["files"])
 
 auth_router = APIRouter()
 
