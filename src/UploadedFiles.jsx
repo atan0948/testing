@@ -2,15 +2,24 @@ import React, { useEffect, useState } from "react";
 
 function UploadedFiles() {
   const [files, setFiles] = useState([]);
+  const token = localStorage.getItem("token"); // Get token from localStorage
 
   useEffect(() => {
-    // Fetch the uploaded files from your API (if you have an endpoint for that)
     const fetchFiles = async () => {
       try {
-        const response = await fetch("http://172.22.30.136:8000/api/files"); // Adjust the endpoint as needed
+        const response = await fetch("http://172.22.30.136:8000/api/files", {
+          method: "GET",
+          headers: {
+            // Correctly include the token with proper string interpolation
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch files");
         }
+
         const data = await response.json();
         setFiles(data); // Assuming the API returns an array of files
       } catch (error) {
@@ -19,7 +28,7 @@ function UploadedFiles() {
     };
 
     fetchFiles();
-  }, []);
+  }, [token]); // Fetch files whenever the token changes
 
   return (
     <div
@@ -35,12 +44,13 @@ function UploadedFiles() {
         {files.map((file) => (
           <li key={file.id} style={{ marginBottom: "10px" }}>
             <a
-              href={file.url}
+              // Correctly link to the file's URL using string interpolation
+              href={`http://172.22.30.136:8000/files/${file.filename}`}
               target='_blank'
               rel='noopener noreferrer'
               style={{ textDecoration: "none", color: "#007bff" }}
             >
-              {file.name}
+              {file.filename} {/* Display the file name */}
             </a>
           </li>
         ))}

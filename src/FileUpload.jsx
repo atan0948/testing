@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
-// Keep the styling minimal and compact as per the original style.
-const formStyle = {
-  backgroundColor: "#fff",
+const formStyle = (isDarkMode) => ({
+  backgroundColor: isDarkMode ? "#333" : "#fff", // Dark mode background
   padding: "20px",
   borderRadius: "8px",
   boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
@@ -14,18 +13,20 @@ const formStyle = {
   margin: "0 auto",
   boxSizing: "border-box",
   overflow: "hidden", // Prevent scroll from appearing
-};
+});
 
-const inputStyle = {
+const inputStyle = (isDarkMode) => ({
   marginBottom: "15px",
   padding: "8px",
   borderRadius: "5px",
   width: "100%", // Makes input take full width
-  border: "1px solid #ccc",
+  border: `1px solid ${isDarkMode ? "#ccc" : "#333"}`, // Border color based on dark mode
   fontSize: "14px", // Reduced font size to make it more compact
-};
+  backgroundColor: isDarkMode ? "#444" : "#fff", // Input background color
+  color: isDarkMode ? "#fff" : "#000", // Input text color
+});
 
-const buttonStyle = {
+const buttonStyle = (isDarkMode) => ({
   padding: "10px 20px",
   backgroundColor: "#007bff",
   color: "#fff",
@@ -39,7 +40,7 @@ const buttonStyle = {
   display: "flex", // Flexbox for centering text horizontally
   justifyContent: "center",
   alignItems: "center",
-};
+});
 
 const messageStyle = {
   marginTop: "10px",
@@ -64,7 +65,7 @@ const blockedFileTypes = [
   ".exe",
 ];
 
-function FileUpload() {
+function FileUpload({ isDarkMode }) {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -137,11 +138,11 @@ function FileUpload() {
   };
 
   return (
-    <div style={formStyle}>
+    <div style={formStyle(isDarkMode)}>
       <h2
         style={{
           textAlign: "center",
-          color: "#000",
+          color: isDarkMode ? "#fff" : "#000", // Heading text color based on dark mode
           fontSize: "2rem",
           marginBottom: "10px",
         }}
@@ -151,10 +152,14 @@ function FileUpload() {
       <input
         type='file'
         onChange={handleFileChange}
-        style={inputStyle}
+        style={inputStyle(isDarkMode)}
         id='fileInput' // Assigning an id to the input field for easy reference
       />
-      <button onClick={handleFileUpload} style={buttonStyle} disabled={!file}>
+      <button
+        onClick={handleFileUpload}
+        style={buttonStyle(isDarkMode)}
+        disabled={!file}
+      >
         Upload File
       </button>
       {message && <p style={messageStyle}>{message}</p>}
