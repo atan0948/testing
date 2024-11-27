@@ -7,7 +7,7 @@ function UploadedFiles() {
     // Fetch the uploaded files from your API (if you have an endpoint for that)
     const fetchFiles = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5002/files"); // Adjust the endpoint as needed
+        const response = await fetch("http://172.22.30.136:8000/api/files"); // Adjust the endpoint as needed
         if (!response.ok) {
           throw new Error("Failed to fetch files");
         }

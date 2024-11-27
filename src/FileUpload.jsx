@@ -96,7 +96,7 @@ function FileUpload() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:5002/home", {
+      const response = await fetch("http://172.22.30.136:8000/api/home", {
         method: "POST",
         body: formData,
         headers: {
