@@ -10,7 +10,6 @@ from typing import List
 
 router = APIRouter()
 
-# Pydantic models for response structure
 class DailyUserCount(BaseModel):
     date: str
     user_count: int
@@ -46,5 +45,4 @@ async def get_user_count_details(days: int = 30, db: Session = Depends(get_db)):
         user_count = daily_user_counts.get(date_str, 0)  # Default to 0 if no signups on that day
         result.append(DailyUserCount(date=date_str, user_count=user_count))
 
-    # Return the structured response with Pydantic models
     return UserCountResponse(totalUserCount=total_count, dailyUserCounts=result)
