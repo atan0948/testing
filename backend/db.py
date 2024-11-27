@@ -29,9 +29,9 @@ class User(Base):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), unique=True, nullable=False, index=True)  # Added index
+    username = Column(String(50), unique=True, nullable=False, index=True) 
     password_hash = Column(String(255), nullable=False)
-    email = Column(String(100), unique=True, nullable=False, index=True)  # Added index
+    email = Column(String(100), unique=True, nullable=False, index=True) 
     role = Column(Enum(RoleEnum), default=RoleEnum.normal)
     created_at = Column(TIMESTAMP, server_default=func.current_timestamp(), nullable=False)
     otp = Column(String(10), nullable=True)
@@ -41,12 +41,12 @@ class User(Base):
 
 # Class for uploaded file
 class UploadedFile(Base):
-    __tablename__ = 'uploaded_files'  # Renamed for better convention
+    __tablename__ = 'uploaded_files' 
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     filename = Column(String(100), nullable=False)
     filepath = Column(String(100), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  # Changed to user_id for clarity
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)  
     created_at = Column(TIMESTAMP, server_default=func.current_timestamp(), nullable=False)
 
     owner = relationship("User", back_populates="upload_files")
@@ -62,10 +62,10 @@ def get_db():
     finally:
         db.close()
 
-# Create the database and tables
+
 def create_database():
     Base.metadata.create_all(bind=engine)
     print("Database and tables created successfully.")
 
-# Create the database and tables on script run
+
 create_database()

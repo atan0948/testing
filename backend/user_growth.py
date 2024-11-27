@@ -12,9 +12,9 @@ async def get_user_growth_per_month(days: int = 30, db: Session = Depends(get_db
     today = datetime.utcnow()
     start_date = today - timedelta(days=days)
 
-    # Query for monthly user counts using MySQL-compatible function
+    # Query for monthly user counts
     monthly_counts = db.query(
-        func.DATE_FORMAT(User.created_at, '%Y-%m-01').label("month"),  # Use DATE_FORMAT to truncate to the first day of the month
+        func.DATE_FORMAT(User.created_at, '%Y-%m-01').label("month"),
         func.count().label("user_count")
     ).filter(User.created_at >= start_date).group_by(func.DATE_FORMAT(User.created_at, '%Y-%m-01')).order_by(func.DATE_FORMAT(User.created_at, '%Y-%m-01')).all()
 

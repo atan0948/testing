@@ -24,6 +24,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+# User registration
 async def register(user: UserRegister, db: Session = Depends(get_db)):
     password_hash = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     new_user = User(username=user.username, password_hash=password_hash, email=user.email)
@@ -41,6 +42,7 @@ async def register(user: UserRegister, db: Session = Depends(get_db)):
                 raise HTTPException(status_code=409, detail='Email already taken.')
         raise HTTPException(status_code=500, detail='Registration failed.')
 
+# User login and token creation
 async def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not bcrypt.checkpw(user.password.encode('utf-8'), db_user.password_hash.encode('utf-8')):
@@ -50,12 +52,14 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"user_id": db_user.id}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Create access token function
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta if expires_delta else timedelta(minutes=15))
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
@@ -67,5 +71,5 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         if user is None:
             raise HTTPException(status_code=401, detail="Invalid authentication credentials")
         return user
-    except jwt.JWTError:
+    except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
