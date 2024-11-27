@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from ..db import UploadedFile, User, get_db
 from ..auth import get_current_user
 import os
-import uuid
 from datetime import datetime
 
 router = APIRouter()
