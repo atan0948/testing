@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 
 function UploadedFiles() {
   const [files, setFiles] = useState([]);
-  const token = localStorage.getItem("token"); // Get token from localStorage
 
-  // Fetch the files data when the component mounts
   useEffect(() => {
+    // Fetch the uploaded files from the backend API
     const fetchFiles = async () => {
       try {
+        // Correctly use template literals for Authorization header
         const response = await fetch("http://172.22.30.136:8000/api/files", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // Ensure token is passed correctly
           },
         });
 
@@ -21,14 +20,14 @@ function UploadedFiles() {
         }
 
         const data = await response.json();
-        setFiles(data); // Assuming the API returns an array of files
+        setFiles(data); // Update the state with the files data
       } catch (error) {
         console.error("Error fetching files:", error);
       }
     };
 
-    fetchFiles();
-  }, [token]); // Fetch files whenever the token changes
+    fetchFiles(); // Fetch files when the component mounts
+  }, []); // Empty dependency array ensures this effect runs once on mount
 
   return (
     <div
@@ -40,9 +39,7 @@ function UploadedFiles() {
       }}
     >
       <h2 style={{ textAlign: "center" }}>Uploaded Files</h2>
-      {files.length === 0 ? (
-        <p style={{ textAlign: "center" }}>No files uploaded yet.</p>
-      ) : (
+      {files.length > 0 ? (
         <table
           style={{
             width: "100%",
@@ -54,82 +51,46 @@ function UploadedFiles() {
             <tr>
               <th
                 style={{
-                  padding: "12px",
-                  border: "1px solid #ddd",
+                  padding: "8px",
                   textAlign: "left",
-                  backgroundColor: "#f4f4f4",
+                  borderBottom: "1px solid #ddd",
                 }}
               >
                 File Name
               </th>
               <th
                 style={{
-                  padding: "12px",
-                  border: "1px solid #ddd",
+                  padding: "8px",
                   textAlign: "left",
-                  backgroundColor: "#f4f4f4",
+                  borderBottom: "1px solid #ddd",
                 }}
               >
-                File Size
-              </th>
-              <th
-                style={{
-                  padding: "12px",
-                  border: "1px solid #ddd",
-                  textAlign: "left",
-                  backgroundColor: "#f4f4f4",
-                }}
-              >
-                Download
+                File Path
               </th>
             </tr>
           </thead>
           <tbody>
             {files.map((file) => (
               <tr key={file.id}>
-                <td
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    textAlign: "left",
-                  }}
-                >
-                  {file.filename}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    textAlign: "left",
-                  }}
-                >
-                  {/* Check if file.size exists, if not display "N/A" */}
-                  {file.size ? `${(file.size / 1024).toFixed(2)} KB` : "N/A"}
-                </td>
-                <td
-                  style={{
-                    padding: "12px",
-                    border: "1px solid #ddd",
-                    textAlign: "left",
-                  }}
-                >
-                  {/* Ensure the correct URL format for downloading */}
+                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
                   <a
-                    href={`http://172.22.30.136:8000/files/${file.filename}`}
+                    href={file.filepath}
                     target='_blank'
                     rel='noopener noreferrer'
-                    style={{
-                      textDecoration: "none",
-                      color: "#007bff",
-                    }}
+                    style={{ color: "#007bff" }}
                   >
-                    Download
+                    {file.filename}
                   </a>
+                </td>
+                <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                  {file.filepath}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      ) : (
+        <p>No files uploaded yet.</p>
       )}
     </div>
   );
