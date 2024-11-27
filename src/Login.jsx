@@ -186,8 +186,7 @@ const Login = () => {
             </div>
           </div>
           <button type='submit' style={buttonStyle} disabled={loading}>
-            {loading ? "Signing In..." : "Sign In"} // Display loading text when
-            logging in
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
         <div style={lineContainerStyle}>

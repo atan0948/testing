@@ -16,7 +16,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/home' element={<Home />} />
+        <Route
+          path='/home'
+          element={<Home isDarkMode={isDarkMode} toggleMode={toggleMode} />}
+        />
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />

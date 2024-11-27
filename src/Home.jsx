@@ -37,7 +37,6 @@ function Home({ isDarkMode, toggleMode }) {
           <FileUpload />
 
           {/* Uploaded Files Section */}
-          <UploadedFiles />
         </div>
       </div>
     </div>

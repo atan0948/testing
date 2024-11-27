@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import {
   FaHome,
   FaUsers,
@@ -110,26 +111,26 @@ const Sidebar = ({ isDarkMode, toggleMode }) => {
 
       {/* Links */}
       <div>
-        <a
-          href='#'
+        <Link
+          to='/home' // Use 'Link' from react-router-dom to navigate to /home
           style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
         >
           <FaHome style={iconStyle} /> {/* Home icon */}
           <span style={linkTextStyle}>Home</span> {/* Home text */}
-        </a>
+        </Link>
+        <Link
+          to='/admin' // Use 'Link' from react-router-dom to navigate to /admin
+          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
+        >
+          <FaChartBar style={iconStyle} /> {/* Analytics icon */}
+          <span style={linkTextStyle}>Analytics</span> {/* Analytics text */}
+        </Link>
         <a
           href='#'
           style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
         >
           <FaUsers style={iconStyle} /> {/* Users icon */}
           <span style={linkTextStyle}>Users</span> {/* Users text */}
-        </a>
-        <a
-          href='#'
-          style={{ ...linkStyle, ...(isSidebarOpen && hoveredLinkStyle) }} // Link style with hover effect
-        >
-          <FaChartBar style={iconStyle} /> {/* Analytics icon */}
-          <span style={linkTextStyle}>Analytics</span> {/* Analytics text */}
         </a>
         <a
           href='#'

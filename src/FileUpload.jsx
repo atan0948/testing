@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+// Keep the styling minimal and compact as per the original style.
 const formStyle = {
   backgroundColor: "#fff",
   padding: "20px",
@@ -12,14 +13,16 @@ const formStyle = {
   maxWidth: "400px", // Maximum width of the form
   margin: "0 auto",
   boxSizing: "border-box",
+  overflow: "hidden", // Prevent scroll from appearing
 };
 
 const inputStyle = {
   marginBottom: "15px",
-  padding: "10px",
+  padding: "8px",
   borderRadius: "5px",
   width: "100%", // Makes input take full width
   border: "1px solid #ccc",
+  fontSize: "14px", // Reduced font size to make it more compact
 };
 
 const buttonStyle = {
@@ -85,6 +88,12 @@ function FileUpload() {
   };
 
   const handleFileUpload = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must be logged in to upload a file.");
+      return;
+    }
+
     if (!file) {
       setError("Please select a file first.");
       return;
@@ -100,7 +109,7 @@ function FileUpload() {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -134,7 +143,7 @@ function FileUpload() {
           textAlign: "center",
           color: "#000",
           fontSize: "2rem",
-          marginBottom: "20px",
+          marginBottom: "10px",
         }}
       >
         File Upload
