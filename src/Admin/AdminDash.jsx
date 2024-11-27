@@ -3,6 +3,7 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import DashMetrics from "./DashMetrics";
 import UserGrowthChart from "./UserGrowthChart";
+import TokenUsageChart from "./TokenUsageChart";
 
 // Container styles - used for the overall layout of the dashboard
 const containerStyle = (isDarkMode) => ({
@@ -23,15 +24,14 @@ const contentStyle = (isDarkMode) => ({
   color: isDarkMode ? "#fff" : "#000", // Conditional text color based on dark mode
 });
 
-// Styles for the chart container to display charts in a grid layout
+// Updated styles for the chart container to display charts side-by-side
 const chartContainerStyle = {
-  display: "grid", // Grid layout for the charts
-  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", // Responsive grid with columns
-  gap: "20px", // Space between grid items
+  display: "flex", // Use flexbox for horizontal layout
+  justifyContent: "space-between", // Space out the charts evenly
+  gap: "20px", // Add space between the charts
   marginTop: "20px", // Top margin for spacing
 };
 
-// AdminDash component, the main component for the Admin Dashboard page
 function AdminDash({ isDarkMode, toggleMode }) {
   const [userCount, setUserCount] = useState(null); // State to store the total user count
   const [totalViews, setTotalViews] = useState("2,300"); // Static value for total views
@@ -95,10 +95,15 @@ function AdminDash({ isDarkMode, toggleMode }) {
                 isDarkMode={isDarkMode}
               />
               <div style={chartContainerStyle}>
-                {/* User Growth chart */}
-                <div>
+                {/* User Growth chart on the left */}
+                <div style={{ flex: 1 }}>
                   <h4>User Growth Over Time</h4>
                   <UserGrowthChart />
+                </div>
+                {/* Token Usage chart on the right */}
+                <div style={{ flex: 1 }}>
+                  <h4>Token Usage Breakdown</h4>
+                  <TokenUsageChart />
                 </div>
               </div>
             </>

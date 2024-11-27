@@ -104,7 +104,7 @@ const Sidebar = ({ isDarkMode, toggleMode }) => {
 
       {/* User Profile */}
       <div style={profileStyle}>
-        <img src='/profile-pic.jfif' alt='User Avatar' style={avatarStyle} />{" "}
+        <img src='/profilepic.png' alt='User Avatar' style={avatarStyle} />{" "}
         {/* User profile picture */}
         <span style={userNameStyle}>User Name</span> {/* User name */}
       </div>
