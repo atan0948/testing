@@ -27,14 +27,14 @@ async def upload_file(
     unique_filename = get_unique_filename(file.filename)
     file_path = os.path.join(upload_folder, unique_filename)
 
-    # Check for file size limit (optional)
+    # Check for file size limit
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB limit
     file_size = len(await file.read())  # Read file size
 
     if file_size > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File size exceeds the 10MB limit")
 
-    # Check if the folder is writable (optional)
+    # Check if the folder is writable
     if not os.access(upload_folder, os.W_OK):
         raise HTTPException(status_code=500, detail="Upload folder is not writable")
 
