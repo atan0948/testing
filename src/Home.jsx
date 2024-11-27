@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import Sidebar from "./Admin/Sidebar";
+import UploadedFile from "./UploadedFiles";
 
 function Home({ isDarkMode, toggleMode }) {
   const containerStyle = {
@@ -34,7 +35,7 @@ function Home({ isDarkMode, toggleMode }) {
         <div style={fileUploadContainerStyle}>
           {/* File Upload Section */}
           <FileUpload />
-
+          <UploadedFile />
           {/* Uploaded Files Section */}
         </div>
       </div>

@@ -29,6 +29,7 @@ app.add_middleware(
 app.include_router(upload_router, prefix="/api", tags=["uploads"])
 app.include_router(get_user_count, prefix="/api", tags=["user_count"])
 app.include_router(user_growth_router, prefix="/api", tags=["user_growth"])
+app.include_router(upload_router, prefix="/api", tags=["files"])
 
 
 auth_router = APIRouter()
