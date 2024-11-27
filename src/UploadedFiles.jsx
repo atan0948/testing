@@ -4,13 +4,13 @@ function UploadedFiles() {
   const [files, setFiles] = useState([]);
   const token = localStorage.getItem("token"); // Get token from localStorage
 
+  // Fetch the files data when the component mounts
   useEffect(() => {
     const fetchFiles = async () => {
       try {
         const response = await fetch("http://172.22.30.136:8000/api/files", {
           method: "GET",
           headers: {
-            // Correctly include the token with proper string interpolation
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
@@ -40,21 +40,97 @@ function UploadedFiles() {
       }}
     >
       <h2 style={{ textAlign: "center" }}>Uploaded Files</h2>
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {files.map((file) => (
-          <li key={file.id} style={{ marginBottom: "10px" }}>
-            <a
-              // Correctly link to the file's URL using string interpolation
-              href={`http://172.22.30.136:8000/files/${file.filename}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              style={{ textDecoration: "none", color: "#007bff" }}
-            >
-              {file.filename} {/* Display the file name */}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {files.length === 0 ? (
+        <p style={{ textAlign: "center" }}>No files uploaded yet.</p>
+      ) : (
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            marginTop: "20px",
+          }}
+        >
+          <thead>
+            <tr>
+              <th
+                style={{
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  textAlign: "left",
+                  backgroundColor: "#f4f4f4",
+                }}
+              >
+                File Name
+              </th>
+              <th
+                style={{
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  textAlign: "left",
+                  backgroundColor: "#f4f4f4",
+                }}
+              >
+                File Size
+              </th>
+              <th
+                style={{
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  textAlign: "left",
+                  backgroundColor: "#f4f4f4",
+                }}
+              >
+                Download
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {files.map((file) => (
+              <tr key={file.id}>
+                <td
+                  style={{
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    textAlign: "left",
+                  }}
+                >
+                  {file.filename}
+                </td>
+                <td
+                  style={{
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    textAlign: "left",
+                  }}
+                >
+                  {/* Check if file.size exists, if not display "N/A" */}
+                  {file.size ? `${(file.size / 1024).toFixed(2)} KB` : "N/A"}
+                </td>
+                <td
+                  style={{
+                    padding: "12px",
+                    border: "1px solid #ddd",
+                    textAlign: "left",
+                  }}
+                >
+                  {/* Ensure the correct URL format for downloading */}
+                  <a
+                    href={`http://172.22.30.136:8000/files/${file.filename}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    style={{
+                      textDecoration: "none",
+                      color: "#007bff",
+                    }}
+                  >
+                    Download
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
